@@ -1,0 +1,698 @@
+user_list_cases:
+- id: USER-LIST-001
+  smoke: true
+  title: 按用户名查询管理员
+  request:
+    auth: true
+    params:
+      pageNum: 1
+      pageSize: 10
+      userName: admin
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - rows
+    - total
+  page_assert:
+    min_rows: 1
+    min_total: 1
+  contains_assert:
+    rows_field: rows
+    field: userName
+    value: admin
+  database:
+    sql: 'SELECT user_id, user_name, nick_name, status, del_flag FROM sys_user WHERE user_name = %s AND del_flag = ''0'' LIMIT
+      1
+
+      '
+    params:
+    - admin
+    expected_fields:
+      user_name: admin
+- id: USER-LIST-002
+  title: 未登录获取用户列表
+  request:
+    auth: false
+    params:
+      pageNum: 1
+      pageSize: 10
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+- id: USER-LIST-003
+  title: 按不存在用户名查询用户列表
+  request:
+    auth: true
+    params:
+      pageNum: 1
+      pageSize: 10
+      userName: not_exists_${unique}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - rows
+    - total
+  page_assert:
+    min_rows: 0
+    min_total: 0
+- id: USER-LIST-004
+  title: 用户列表分页每页一条
+  request:
+    auth: true
+    params:
+      pageNum: 1
+      pageSize: 1
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - rows
+    - total
+  page_assert:
+    min_rows: 1
+    min_total: 1
+user_create_cases:
+- id: USER-CREATE-001
+  smoke: true
+  title: 新增普通用户
+  request:
+    auth: true
+    payload:
+      deptId: 105
+      userName: ${unique_user}
+      nickName: ${unique_nick}
+      password: Api@Test123
+      email: ${unique_email}
+      phonenumber: ${unique_phone}
+      sex: '2'
+      status: '0'
+      roleIds:
+      - 2
+      postIds:
+      - 4
+      role: []
+      remark: 接口自动化新增用户
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 新增成功
+  database:
+    sql: 'SELECT user_id, user_name, nick_name, status, del_flag FROM sys_user WHERE user_name = %s LIMIT 1
+
+      '
+    params:
+    - ${unique_user}
+    expected_fields:
+      user_name: ${unique_user}
+      nick_name: ${unique_nick}
+      status: '0'
+      del_flag: '0'
+- id: USER-CREATE-002
+  title: 新增用户时登录账号已存在
+  request:
+    auth: true
+    payload:
+      deptId: 105
+      userName: admin
+      nickName: 重复管理员
+      password: Api@Test123
+      sex: '2'
+      status: '0'
+      roleIds:
+      - 2
+      postIds:
+      - 4
+      role: []
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 登录账号已存在
+- id: USER-CREATE-003
+  title: 新增用户时登录账号为空
+  request:
+    auth: true
+    payload:
+      deptId: 105
+      userName: ''
+      nickName: api_auto_negative
+      password: Api@Test123
+      sex: '2'
+      status: '0'
+      roleIds:
+      - 2
+      postIds:
+      - 4
+      role: []
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 用户账号不能为空
+- id: USER-CREATE-004
+  title: 新增用户时登录账号超过长度限制
+  request:
+    auth: true
+    payload:
+      deptId: 105
+      userName: api_auto_user_name_over_30_chars_${unique}
+      nickName: api_auto_negative
+      password: Api@Test123
+      sex: '2'
+      status: '0'
+      roleIds:
+      - 2
+      postIds:
+      - 4
+      role: []
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 用户账号长度不能超过30个字符
+- id: USER-CREATE-005
+  title: 新增用户时邮箱格式错误
+  request:
+    auth: true
+    payload:
+      deptId: 105
+      userName: ${unique_user}
+      nickName: ${unique_nick}
+      password: Api@Test123
+      email: bad-email
+      phonenumber: ${unique_phone}
+      sex: '2'
+      status: '0'
+      roleIds:
+      - 2
+      postIds:
+      - 4
+      role: []
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 邮箱格式不正确
+- id: USER-CREATE-006
+  title: 新增用户时手机号超过长度限制
+  request:
+    auth: true
+    payload:
+      deptId: 105
+      userName: ${unique_user}
+      nickName: ${unique_nick}
+      password: Api@Test123
+      phonenumber: '138001380001'
+      sex: '2'
+      status: '0'
+      roleIds:
+      - 2
+      postIds:
+      - 4
+      role: []
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 手机号码长度不能超过11个字符
+user_update_cases:
+- id: USER-UPDATE-001
+  smoke: true
+  title: 编辑临时用户昵称
+  request:
+    auth: true
+    payload:
+      userId: ${managed_user_id}
+      deptId: 105
+      userName: ${managed_user_name}
+      nickName: ${unique_nick}_已编辑
+      email: ${managed_email}
+      phonenumber: ${managed_phone}
+      sex: '1'
+      status: '0'
+      roleIds:
+      - 2
+      postIds:
+      - 4
+      role: []
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 更新成功
+  database:
+    sql: 'SELECT user_id, user_name, nick_name, sex FROM sys_user WHERE user_id = %s LIMIT 1
+
+      '
+    params:
+    - ${managed_user_id}
+    expected_fields:
+      nick_name: ${unique_nick}_已编辑
+      sex: '1'
+- id: USER-UPDATE-002
+  title: 不允许编辑超级管理员
+  request:
+    auth: true
+    payload:
+      userId: 1
+      deptId: 103
+      userName: admin
+      nickName: 管理员
+      sex: '0'
+      status: '0'
+      roleIds:
+      - 1
+      postIds:
+      - 1
+      role: []
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 不允许操作超级管理员用户
+- id: USER-UPDATE-003
+  title: 编辑不存在的用户
+  request:
+    auth: true
+    payload:
+      userId: 999999
+      deptId: 105
+      userName: api_auto_not_exists
+      nickName: api_auto_negative
+      email: not_exists@example.com
+      phonenumber: '13800138000'
+      sex: '2'
+      status: '0'
+      roleIds:
+      - 2
+      postIds:
+      - 4
+      role: []
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: NoneType
+- id: USER-UPDATE-004
+  title: 编辑用户时邮箱格式错误
+  request:
+    auth: true
+    payload:
+      userId: ${managed_user_id}
+      deptId: 105
+      userName: ${managed_user_name}
+      nickName: ${managed_nick}
+      email: bad-email
+      phonenumber: ${managed_phone}
+      sex: '2'
+      status: '0'
+      roleIds:
+      - 2
+      postIds:
+      - 4
+      role: []
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 邮箱格式不正确
+user_delete_cases:
+- id: USER-DELETE-001
+  smoke: true
+  title: 删除临时用户
+  request:
+    auth: true
+    user_ids: ${managed_user_id}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 删除成功
+  database:
+    sql: 'SELECT user_id, del_flag FROM sys_user WHERE user_id = %s LIMIT 1
+
+      '
+    params:
+    - ${managed_user_id}
+    expected_fields:
+      del_flag: '2'
+- id: USER-DELETE-002
+  title: 不允许删除当前登录用户
+  request:
+    auth: true
+    user_ids: 1
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 当前登录用户不能删除
+- id: USER-DELETE-003
+  title: 删除不存在的用户
+  request:
+    auth: true
+    user_ids: 999999
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 删除成功
+- id: USER-DELETE-004
+  title: 删除用户时用户ID为空
+  request:
+    auth: true
+    user_ids: ''
+  expected:
+    http_status: 405
+user_reset_pwd_cases:
+- id: USER-RESET-PWD-001
+  smoke: true
+  title: 重置临时用户密码
+  request:
+    auth: true
+    payload:
+      userId: ${managed_user_id}
+      password: Api@Test456
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 更新成功
+- id: USER-RESET-PWD-002
+  title: 不允许重置超级管理员密码
+  request:
+    auth: true
+    payload:
+      userId: 1
+      password: Api@Test456
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 不允许操作超级管理员用户
+- id: USER-RESET-PWD-003
+  title: 重置不存在用户密码
+  request:
+    auth: true
+    payload:
+      userId: 999999
+      password: Api@Test456
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: NoneType
+- id: USER-RESET-PWD-004
+  title: 重置用户密码时密码包含非法字符
+  request:
+    auth: true
+    payload:
+      userId: ${managed_user_id}
+      password: Api<Test456
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 密码不能包含非法字符
+user_change_status_cases:
+- id: USER-CHANGE-STATUS-001
+  smoke: true
+  title: 停用临时用户
+  request:
+    auth: true
+    payload:
+      userId: ${managed_user_id}
+      status: '1'
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 更新成功
+  database:
+    sql: 'SELECT user_id, status FROM sys_user WHERE user_id = %s LIMIT 1
+
+      '
+    params:
+    - ${managed_user_id}
+    expected_fields:
+      status: '1'
+- id: USER-CHANGE-STATUS-002
+  title: 不允许修改超级管理员状态
+  request:
+    auth: true
+    payload:
+      userId: 1
+      status: '1'
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 不允许操作超级管理员用户
+- id: USER-CHANGE-STATUS-003
+  title: 修改不存在用户状态
+  request:
+    auth: true
+    payload:
+      userId: 999999
+      status: '1'
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: NoneType
+user_profile_get_cases:
+- id: USER-PROFILE-GET-001
+  smoke: true
+  title: 获取当前用户个人信息
+  request:
+    auth: true
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - data
+    - postGroup
+    - roleGroup
+- id: USER-PROFILE-GET-002
+  title: 未登录获取个人信息
+  request:
+    auth: false
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+user_profile_update_cases:
+- id: USER-PROFILE-UPDATE-001
+  smoke: true
+  title: 修改当前用户个人信息
+  request:
+    auth: true
+    payload:
+      nickName: ${unique_nick}_个人信息
+      email: admin@example.com
+      phonenumber: '13800138000'
+      sex: '0'
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 更新成功
+- id: USER-PROFILE-UPDATE-002
+  title: 未登录修改个人信息
+  request:
+    auth: false
+    payload:
+      nickName: 管理员
+      email: admin@example.com
+      phonenumber: '13800138000'
+      sex: '0'
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+- id: USER-PROFILE-UPDATE-003
+  title: 当前个人信息接口允许非标准邮箱
+  request:
+    auth: true
+    payload:
+      nickName: api_auto_negative
+      email: bad-email
+      phonenumber: '13800138000'
+      sex: '0'
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 更新成功
+- id: USER-PROFILE-UPDATE-004
+  title: 修改个人信息时昵称超过长度限制
+  request:
+    auth: true
+    payload:
+      nickName: api_auto_profile_nickname_over_30_chars_${unique}
+      email: admin@example.com
+      phonenumber: '13800138000'
+      sex: '0'
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: Data too long
+user_options_cases:
+- id: USER-OPTIONS-001
+  smoke: true
+  title: 获取用户岗位和角色列表
+  request:
+    auth: true
+    params: {}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - posts
+    - roles
+- id: USER-OPTIONS-002
+  title: 未登录获取用户岗位和角色列表
+  request:
+    auth: false
+    params: {}
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+user_detail_cases:
+- id: USER-DETAIL-001
+  smoke: true
+  title: 获取临时用户详情
+  request:
+    auth: true
+    user_id: ${managed_user_id}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - data
+    - posts
+    - roles
+- id: USER-DETAIL-002
+  title: 未登录获取用户详情
+  request:
+    auth: false
+    user_id: 1
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+- id: USER-DETAIL-003
+  title: 获取不存在用户详情
+  request:
+    auth: true
+    user_id: 999999
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: NoneType
+user_avatar_cases:
+- id: USER-AVATAR-001
+  smoke: true
+  title: 上传当前用户头像-图片1
+  request:
+    auth: true
+    file:
+      field_name: avatarfile
+      path: api_tests/data/files/1.jpg
+      filename: 1.jpg
+      content_type: image/jpeg
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - imgUrl
+- id: USER-AVATAR-002
+  title: 上传当前用户头像-图片2
+  request:
+    auth: true
+    file:
+      field_name: avatarfile
+      path: api_tests/data/files/2.jpg
+      filename: 2.jpg
+      content_type: image/jpeg
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - imgUrl
+- id: USER-AVATAR-003
+  title: 未登录上传头像
+  request:
+    auth: false
+    file:
+      field_name: avatarfile
+      path: api_tests/data/files/1.jpg
+      filename: 1.jpg
+      content_type: image/jpeg
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+- id: USER-AVATAR-004
+  title: 上传当前用户头像-空文件
+  request:
+    auth: true
+    file:
+      field_name: avatarfile
+      base64: ''
+      filename: empty.png
+      content_type: image/png
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 上传图片异常
+- id: USER-AVATAR-005
+  title: 上传当前用户头像-非图片文件
+  request:
+    auth: true
+    file:
+      field_name: avatarfile
+      text: not image content
+      filename: avatar.txt
+      content_type: text/plain
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 头像文件类型不合法
+- id: USER-AVATAR-006
+  title: 上传当前用户头像-超大文件
+  request:
+    auth: true
+    file:
+      field_name: avatarfile
+      size_bytes: 2097153
+      fill_byte: 0
+      filename: large.png
+      content_type: image/png
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 头像文件大小不能超过2MB

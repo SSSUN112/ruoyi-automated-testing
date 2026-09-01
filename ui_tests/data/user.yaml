@@ -1,0 +1,83 @@
+user_manage_lifecycle:
+  id: UI-USER-001
+  title: 用户管理生命周期流程
+  user:
+    userName: ui_auto_${unique}
+    nickName: UI自动化用户${unique}
+    password: Api@Test123
+    email: ui_auto_${unique}@example.com
+    phonenumber: ${unique_phone}
+    remark: UI自动化用户管理流程
+  updated_user:
+    nickName: UI自动化修改用户${unique}
+    email: ui_auto_update_${unique}@example.com
+    phonenumber: ${unique_phone_alt}
+    remark: UI自动化用户管理修改流程
+  reset_password: New@Test123
+  expected:
+    created_message: 新增成功
+    updated_message: 修改成功
+    disabled_message: 停用成功
+    deleted_message: 删除成功
+
+user_manage_required_validation:
+  id: UI-USER-002
+  title: 用户管理新增用户必填项校验
+  expected_errors:
+    - 用户昵称不能为空
+    - 用户名称不能为空
+    - 用户密码不能为空
+
+user_manage_format_validation:
+  id: UI-USER-003
+  title: 用户管理新增用户格式校验
+  user:
+    userName: ui_auto_${unique}
+    nickName: UI自动化格式校验${unique}
+    password: Api@Test123
+    email: invalid-email
+    phonenumber: 139abc12345
+    remark: UI自动化格式校验
+  expected_errors:
+    - 请输入正确的手机号码
+    - 请输入正确的邮箱地址
+
+user_manage_duplicate_username:
+  id: UI-USER-004
+  title: 用户管理新增重复用户名校验
+  user:
+    userName: ui_auto_${unique}
+    nickName: UI自动化重复用户${unique}
+    password: Api@Test123
+    email: ui_auto_duplicate_${unique}@example.com
+    phonenumber: ${unique_phone}
+    remark: UI自动化重复用户名校验
+  duplicate_user:
+    userName: ui_auto_${unique}
+    nickName: UI自动化重复用户二${unique}
+    password: Api@Test123
+    email: ui_auto_duplicate_second_${unique}@example.com
+    phonenumber: ${unique_phone_alt}
+    remark: UI自动化重复用户名校验
+  expected_error: 登录账号已存在
+
+user_manage_search_empty:
+  id: UI-USER-005
+  title: 用户管理搜索无结果
+  userName: ui_auto_not_exist_${unique}
+
+user_profile_avatar_upload:
+  id: UI-USER-006
+  title: 个人中心上传头像
+  file:
+    path: api_tests/data/files/1.jpg
+  expected:
+    success_message: 修改成功
+
+user_manage_export:
+  id: UI-USER-007
+  title: 用户管理导出用户列表
+  expected:
+    filename_prefix: user_
+    filename_suffix: .xlsx
+    min_bytes: 100

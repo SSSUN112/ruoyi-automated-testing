@@ -1,0 +1,383 @@
+post_list_cases:
+- id: POST-LIST-001
+  smoke: true
+  title: 按岗位编码查询岗位列表
+  request:
+    auth: true
+    params:
+      pageNum: 1
+      pageSize: 10
+      postCode: user
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - rows
+    - total
+  page_assert:
+    min_rows: 1
+    min_total: 1
+  contains_assert:
+    rows_field: rows
+    field: postCode
+    value: user
+- id: POST-LIST-002
+  title: 未登录获取岗位列表
+  request:
+    auth: false
+    params:
+      pageNum: 1
+      pageSize: 10
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+- id: POST-LIST-003
+  title: 按不存在岗位编码查询岗位列表
+  request:
+    auth: true
+    params:
+      pageNum: 1
+      pageSize: 10
+      postCode: not_exists_${unique}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - rows
+    - total
+  page_assert:
+    min_rows: 0
+    min_total: 0
+- id: POST-LIST-004
+  title: 岗位列表分页每页一条
+  request:
+    auth: true
+    params:
+      pageNum: 1
+      pageSize: 1
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - rows
+    - total
+  page_assert:
+    min_rows: 1
+    min_total: 1
+post_create_cases:
+- id: POST-CREATE-001
+  smoke: true
+  title: 新增岗位
+  request:
+    auth: true
+    payload:
+      postCode: ${unique_post_code}
+      postName: ${unique_post_name}
+      postSort: 99
+      status: '0'
+      remark: 接口自动化新增岗位
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 新增成功
+  database:
+    sql: 'SELECT post_id, post_code, post_name, post_sort, status FROM sys_post WHERE post_code = %s LIMIT 1
+
+      '
+    params:
+    - ${unique_post_code}
+    expected_fields:
+      post_code: ${unique_post_code}
+      post_name: ${unique_post_name}
+      post_sort: 99
+      status: '0'
+- id: POST-CREATE-002
+  title: 新增岗位编码已存在
+  request:
+    auth: true
+    payload:
+      postCode: ceo
+      postName: 接口自动化重复岗位编码
+      postSort: 99
+      status: '0'
+      remark: 重复岗位编码
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 岗位编码已存在
+- id: POST-CREATE-003
+  title: 新增岗位时岗位编码为空
+  request:
+    auth: true
+    payload:
+      postCode: ''
+      postName: ${unique_post_name}
+      postSort: 99
+      status: '0'
+      remark: api automation negative case
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 岗位编码不能为空
+- id: POST-CREATE-004
+  title: 新增岗位时岗位名称为空
+  request:
+    auth: true
+    payload:
+      postCode: ${unique_post_code}
+      postName: ''
+      postSort: 99
+      status: '0'
+      remark: api automation negative case
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 岗位名称不能为空
+- id: POST-CREATE-005
+  title: 新增岗位时岗位编码超过长度限制
+  request:
+    auth: true
+    payload:
+      postCode: api_auto_post_code_length_over_sixty_four_characters_${unique}_abcdefghi
+      postName: ${unique_post_name}
+      postSort: 99
+      status: '0'
+      remark: api automation negative case
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 岗位编码长度不能超过64个字符
+- id: POST-CREATE-006
+  title: 新增岗位时显示顺序为空
+  request:
+    auth: true
+    payload:
+      postCode: ${unique_post_code}
+      postName: ${unique_post_name}
+      postSort: null
+      status: '0'
+      remark: api automation negative case
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 显示顺序不能为空
+- id: POST-CREATE-007
+  title: 新增岗位时岗位名称已存在
+  request:
+    auth: true
+    payload:
+      postCode: ${unique_post_code}
+      postName: 董事长
+      postSort: 99
+      status: '0'
+      remark: api automation negative case
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 岗位名称已存在
+post_update_cases:
+- id: POST-UPDATE-001
+  smoke: true
+  title: 编辑临时岗位
+  request:
+    auth: true
+    payload:
+      postId: ${managed_post_id}
+      postCode: ${managed_post_code}
+      postName: ${managed_post_name}_已编辑
+      postSort: 98
+      status: '1'
+      remark: 接口自动化编辑岗位
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 更新成功
+  database:
+    sql: 'SELECT post_id, post_name, post_sort, status FROM sys_post WHERE post_id = %s LIMIT 1
+
+      '
+    params:
+    - ${managed_post_id}
+    expected_fields:
+      post_name: ${managed_post_name}_已编辑
+      post_sort: 98
+      status: '1'
+- id: POST-UPDATE-002
+  title: 编辑不存在的岗位
+  request:
+    auth: true
+    payload:
+      postId: 999999
+      postCode: not_exists
+      postName: 不存在岗位
+      postSort: 99
+      status: '0'
+      remark: 不存在岗位
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 岗位不存在
+- id: POST-UPDATE-003
+  title: 编辑岗位时岗位名称已存在
+  request:
+    auth: true
+    payload:
+      postId: ${managed_post_id}
+      postCode: ${managed_post_code}
+      postName: 董事长
+      postSort: 98
+      status: '0'
+      remark: api automation negative case
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 岗位名称已存在
+- id: POST-UPDATE-004
+  title: 编辑岗位时岗位编码为空
+  request:
+    auth: true
+    payload:
+      postId: ${managed_post_id}
+      postCode: ''
+      postName: ${managed_post_name}
+      postSort: 98
+      status: '0'
+      remark: api automation negative case
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 岗位编码不能为空
+post_delete_cases:
+- id: POST-DELETE-001
+  smoke: true
+  title: 删除临时岗位
+  request:
+    auth: true
+    post_ids: ${managed_post_id}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 删除成功
+  database:
+    assert: not_exists
+    sql: 'SELECT post_id FROM sys_post WHERE post_id = %s LIMIT 1
+
+      '
+    params:
+    - ${managed_post_id}
+- id: POST-DELETE-002
+  title: 删除已分配用户的岗位
+  request:
+    auth: true
+    post_ids: 4
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 已分配
+- id: POST-DELETE-003
+  title: 删除不存在的岗位
+  request:
+    auth: true
+    post_ids: 999999
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 删除成功
+- id: POST-DELETE-004
+  title: 删除岗位时岗位ID为空
+  request:
+    auth: true
+    post_ids: ''
+  expected:
+    http_status: 404
+post_detail_cases:
+- id: POST-DETAIL-001
+  smoke: true
+  title: 获取岗位详情
+  request:
+    auth: true
+    post_id: 4
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - data
+- id: POST-DETAIL-002
+  title: 未登录获取岗位详情
+  request:
+    auth: false
+    post_id: 4
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+- id: POST-DETAIL-003
+  title: 获取不存在岗位详情
+  request:
+    auth: true
+    post_id: 999999
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - data
+post_export_cases:
+- id: POST-EXPORT-001
+  smoke: true
+  title: 导出岗位列表
+  request:
+    auth: true
+    form:
+      pageNum: 1
+      pageSize: 10
+      postCode: user
+  expected_file:
+    http_status: 200
+    min_bytes: 100
+    startswith: PK
+- id: POST-EXPORT-002
+  title: 未登录导出岗位列表
+  request:
+    auth: false
+    form:
+      pageNum: 1
+      pageSize: 10
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+- id: POST-EXPORT-003
+  title: 导出不存在岗位编码的岗位列表
+  request:
+    auth: true
+    form:
+      pageNum: 1
+      pageSize: 10
+      postCode: not_exists_${unique}
+  expected_file:
+    http_status: 200
+    min_bytes: 100
+    startswith: PK

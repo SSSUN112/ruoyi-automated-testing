@@ -1,0 +1,39 @@
+role_manage_lifecycle:
+  id: UI-ROLE-001
+  title: 角色管理生命周期流程
+  role:
+    roleName: UI自动化角色${unique}
+    roleKey: ui_auto_role_${unique}
+    roleSort: 99
+    remark: UI自动化角色管理流程
+  updated_role:
+    roleName: UI自动化修改角色${unique}
+    roleSort: 98
+    remark: UI自动化角色管理修改流程
+
+role_manage_required_validation:
+  id: UI-ROLE-002
+  title: 角色管理新增角色必填项校验
+  expected_errors:
+    - 角色名称不能为空
+    - 权限字符不能为空
+
+role_manage_duplicate_role_key:
+  id: UI-ROLE-003
+  title: 角色管理新增重复权限字符校验
+  role:
+    roleName: UI自动化重复角色${unique}
+    roleKey: ui_auto_role_${unique}
+    roleSort: 99
+    remark: UI自动化重复权限字符校验
+  duplicate_role:
+    roleName: UI自动化重复角色二${unique}
+    roleKey: ui_auto_role_${unique}
+    roleSort: 98
+    remark: UI自动化重复权限字符校验
+  expected_error: 角色权限已存在
+
+role_manage_search_empty:
+  id: UI-ROLE-004
+  title: 角色管理搜索无结果
+  roleName: UI自动化不存在角色${unique}

@@ -1,0 +1,60 @@
+menu_manage_lifecycle:
+  id: UI-MENU-001
+  title: 菜单管理生命周期流程
+  menu:
+    menuName: UI自动化菜单${unique}
+    orderNum: 99
+    path: ui-auto-menu-${unique}
+  updated_menu:
+    menuName: UI自动化修改菜单${unique}
+    orderNum: 98
+    path: ui-auto-menu-update-${unique}
+
+menu_manage_required_validation:
+  id: UI-MENU-002
+  title: 菜单管理新增菜单必填项校验
+  expected_errors:
+    - 菜单名称不能为空
+    - 菜单顺序不能为空
+    - 路由地址不能为空
+
+menu_manage_duplicate_name:
+  id: UI-MENU-003
+  title: 菜单管理新增重复菜单名称校验
+  menu:
+    menuName: UI自动化重复菜单${unique}
+    orderNum: 99
+    path: ui-auto-menu-duplicate-${unique}
+  duplicate_menu:
+    menuName: UI自动化重复菜单${unique}
+    orderNum: 98
+    path: ui-auto-menu-duplicate-second-${unique}
+  expected_error: 菜单名称已存在
+
+menu_manage_search_empty:
+  id: UI-MENU-004
+  title: 菜单管理搜索无结果
+  menuName: UI自动化不存在菜单${unique}
+
+menu_permission_flow:
+  id: UI-MENU-PERMISSION-001
+  title: 菜单权限变化流程
+  menu:
+    menuName: UI自动化权限菜单${unique}
+    orderNum: 99
+    menuType: C
+    path: ui-auto-permission-${unique}
+    component: system/menu/index
+    perms: system:ui:auto:${unique}
+  role:
+    roleName: UI自动化权限角色${unique}
+    roleKey: ui_auto_role_${unique}
+    roleSort: 99
+    remark: UI自动化菜单权限流程
+  user:
+    userName: ui_perm_${unique}
+    nickName: UI自动化权限用户${unique}
+    password: Api@Test123
+    email: ui_auto_perm_${unique}@example.com
+    phonenumber: ${unique_phone}
+    remark: UI自动化菜单权限流程

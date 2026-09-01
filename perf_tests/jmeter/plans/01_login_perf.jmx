@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="RuoYi 登录认证压测" enabled="true">
+      <stringProp name="TestPlan.comments">获取验证码 -&gt; 从 Redis 读取验证码答案 -&gt; 登录，验证登录认证链路在低/中并发下的性能。</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="protocol" elementType="Argument">
+            <stringProp name="Argument.name">protocol</stringProp>
+            <stringProp name="Argument.value">${__P(protocol,http)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="server" elementType="Argument">
+            <stringProp name="Argument.name">server</stringProp>
+            <stringProp name="Argument.value">${__P(server,127.0.0.1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="port" elementType="Argument">
+            <stringProp name="Argument.name">port</stringProp>
+            <stringProp name="Argument.value">${__P(port,19099)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="username" elementType="Argument">
+            <stringProp name="Argument.name">username</stringProp>
+            <stringProp name="Argument.value">${__P(username,admin)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="password" elementType="Argument">
+            <stringProp name="Argument.name">password</stringProp>
+            <stringProp name="Argument.value">${__P(password,admin123)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="redis_host" elementType="Argument">
+            <stringProp name="Argument.name">redis_host</stringProp>
+            <stringProp name="Argument.value">${__P(redis_host,127.0.0.1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="redis_port" elementType="Argument">
+            <stringProp name="Argument.name">redis_port</stringProp>
+            <stringProp name="Argument.value">${__P(redis_port,16379)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="redis_password" elementType="Argument">
+            <stringProp name="Argument.name">redis_password</stringProp>
+            <stringProp name="Argument.value">${__P(redis_password,)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="redis_db" elementType="Argument">
+            <stringProp name="Argument.name">redis_db</stringProp>
+            <stringProp name="Argument.value">${__P(redis_db,2)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="01 登录认证线程组" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="循环控制器" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">${__P(loop_count,10)}</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(threads,1)}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${__P(ramp_up,1)}</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP 请求默认值" enabled="true">
+          <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
+          <stringProp name="HTTPSampler.domain">${server}</stringProp>
+          <stringProp name="HTTPSampler.port">${port}</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">${__P(connect_timeout,5000)}</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">${__P(response_timeout,10000)}</stringProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments" />
+          </elementProp>
+        </ConfigTestElement>
+        <hashTree />
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="01 获取图片验证码" enabled="true">
+          <stringProp name="HTTPSampler.path">/captchaImage</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments" />
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取验证码 uuid" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">captcha_uuid;captcha_enabled</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.uuid;$.captchaEnabled</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND;true</stringProp>
+          </JSONPostProcessor>
+          <hashTree />
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="从 Redis 读取验证码答案" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script"><![CDATA[
+if (vars.get('captcha_enabled') == 'false') {
+    vars.put('captcha_code', '')
+    return
+}
+
+def uuid = vars.get('captcha_uuid')
+if (!uuid || uuid == 'NOT_FOUND') {
+    throw new AssertionError('验证码 uuid 提取失败')
+}
+
+def socket = new Socket(vars.get('redis_host'), vars.get('redis_port') as int)
+socket.soTimeout = 5000
+def input = socket.getInputStream()
+def output = socket.getOutputStream()
+
+def readLine = {
+    def buffer = new ByteArrayOutputStream()
+    int previous = -1
+    int current
+    while ((current = input.read()) != -1) {
+        if (previous == 13 && current == 10) {
+            def bytes = buffer.toByteArray()
+            return new String(bytes, 0, bytes.length - 1, 'UTF-8')
+        }
+        buffer.write(current)
+        previous = current
+    }
+    throw new EOFException('Redis 响应读取失败')
+}
+
+def readFixedBytes = { int length ->
+    byte[] bytes = new byte[length]
+    int offset = 0
+    while (offset < length) {
+        int count = input.read(bytes, offset, length - offset)
+        if (count < 0) {
+            throw new EOFException('Redis bulk string 读取失败')
+        }
+        offset += count
+    }
+    input.read()
+    input.read()
+    return bytes
+}
+
+def readResp
+readResp = {
+    int prefix = input.read()
+    if (prefix < 0) {
+        throw new EOFException('Redis 无响应')
+    }
+
+    switch ((char) prefix) {
+        case '+':
+            return readLine()
+        case '-':
+            throw new RuntimeException('Redis 错误：' + readLine())
+        case ':':
+            return readLine()
+        case '$':
+            int length = readLine() as int
+            if (length == -1) {
+                return null
+            }
+            return new String(readFixedBytes(length), 'UTF-8')
+        case '*':
+            int count = readLine() as int
+            def values = []
+            count.times { values << readResp() }
+            return values
+        default:
+            throw new RuntimeException('未知 Redis 响应类型：' + ((char) prefix))
+    }
+}
+
+def sendCommand = { List<String> parts ->
+    output.write(("*${parts.size()}\r\n").getBytes('UTF-8'))
+    parts.each { part ->
+        byte[] bytes = part.getBytes('UTF-8')
+        output.write(('$' + bytes.length + '\r\n').getBytes('UTF-8'))
+        output.write(bytes)
+        output.write("\r\n".getBytes('UTF-8'))
+    }
+    output.flush()
+    return readResp()
+}
+
+try {
+    def password = vars.get('redis_password')
+    if (password) {
+        sendCommand(['AUTH', password])
+    }
+
+    def db = vars.get('redis_db')
+    if (db) {
+        sendCommand(['SELECT', db])
+    }
+
+    def redisKey = 'captcha_codes:' + uuid
+    def code = sendCommand(['GET', redisKey])
+    if (!code) {
+        throw new AssertionError('Redis 中未找到验证码：' + redisKey)
+    }
+
+    vars.put('captcha_code', code.toString())
+} finally {
+    socket.close()
+}
+]]></stringProp>
+          </JSR223PostProcessor>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="02 登录获取 token" enabled="true">
+          <stringProp name="HTTPSampler.path">/login</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="username" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">username</stringProp>
+                <stringProp name="Argument.value">${username}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+              <elementProp name="password" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">password</stringProp>
+                <stringProp name="Argument.value">${password}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+              <elementProp name="uuid" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">uuid</stringProp>
+                <stringProp name="Argument.value">${captcha_uuid}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+              <elementProp name="code" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">code</stringProp>
+                <stringProp name="Argument.value">${captcha_code}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="登录请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取登录 token" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">token</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.token</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree />
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="保存 token 到全局属性" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script"><![CDATA[
+def token = vars.get('token')
+if (!token || token == 'NOT_FOUND') {
+    throw new AssertionError('登录 token 提取失败')
+}
+props.put('auth_token', token)
+]]></stringProp>
+          </JSR223PostProcessor>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言登录成功" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+              <stringProp name="110541305">token</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">登录响应应包含 code 200 和 token</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+        </hashTree>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

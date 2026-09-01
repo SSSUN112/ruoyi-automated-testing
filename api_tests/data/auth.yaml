@@ -1,0 +1,176 @@
+login_cases:
+- id: LOGIN-001
+  smoke: true
+  title: 正确账号和密码登录
+  request:
+    username: admin
+    password: admin123
+  expected:
+    http_status: 200
+    code: 200
+    msg_contains: 登录成功
+    required_fields:
+    - token
+- id: LOGIN-002
+  title: 用户名不存在
+  request:
+    username: auto_not_exist_user
+    password: 12345
+  expected:
+    http_status: 200
+    code: 601
+    msg_contains: 用户不存在
+    success: false
+- id: LOGIN-003
+  title: 登录密码错误
+  request:
+    username: 孙孙
+    password: wrong_password_123
+  expected:
+    http_status: 200
+    code: 601
+    msg_contains: 密码
+    success: false
+- id: LOGIN-004
+  title: 用户名为空
+  request:
+    username: ''
+    password: admin123
+  expected:
+    http_status: 422
+- id: LOGIN-005
+  title: 密码为空
+  request:
+    username: admin
+    password: ''
+  expected:
+    http_status: 422
+logout_cases:
+- id: LOGOUT-001
+  smoke: true
+  title: 已登录用户退出登录
+  request:
+    auth: true
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 退出成功
+- id: LOGOUT-002
+  title: 未登录用户退出登录
+  request:
+    auth: false
+  expected:
+    http_status: 401
+    code: 401
+    msg_contains: Not authenticated
+register_cases:
+- id: REGISTER-001
+  smoke: true
+  title: 开启注册时使用正确验证码注册用户
+  precheck:
+    register_enabled: true
+  request:
+    captcha: valid
+    payload:
+      username: ${unique_user}
+      password: Api@Test123
+      confirmPassword: Api@Test123
+      uuid: ${captcha_uuid}
+      code: ${captcha_code}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 新增成功
+  database:
+    sql: 'SELECT user_id, user_name, nick_name, del_flag FROM sys_user WHERE user_name = %s LIMIT 1 '
+    params:
+    - ${unique_user}
+    expected_fields:
+      user_name: ${unique_user}
+      del_flag: '0'
+- id: REGISTER-002
+  title: 注册时两次密码不一致
+  request:
+    captcha: valid
+    payload:
+      username: ${unique_user}
+      password: Api@Test123
+      confirmPassword: Api@Test456
+      uuid: ${captcha_uuid}
+      code: ${captcha_code}
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 两次输入的密码不一致
+- id: REGISTER-003
+  title: 注册时验证码错误
+  precheck:
+    register_enabled: true
+    captcha_enabled: true
+  request:
+    captcha: wrong
+    payload:
+      username: ${unique_user}
+      password: Api@Test123
+      confirmPassword: Api@Test123
+      uuid: ${captcha_uuid}
+      code: ${captcha_code}
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 验证码错误
+- id: REGISTER-004
+  title: 注册账户已存在
+  precheck:
+    register_enabled: true
+  request:
+    captcha: valid
+    payload:
+      username: admin
+      password: Api@Test123
+      confirmPassword: Api@Test123
+      uuid: ${captcha_uuid}
+      code: ${captcha_code}
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 登录账号已存在
+- id: REGISTER-005
+  title: 用户名过长
+  precheck:
+    register_enabled: true
+  request:
+    captcha: valid
+    payload:
+      username: api_auto_register_name_over_30_chars_${unique}
+      password: Api@Test123
+      confirmPassword: Api@Test123
+      uuid: ${captcha_uuid}
+      code: ${captcha_code}
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: Data too long
+- id: REGISTER-006
+  title: 密码包含非法字符
+  precheck:
+    register_enabled: true
+  request:
+    captcha: valid
+    payload:
+      username: ${unique_user}
+      password: Api<Test123
+      confirmPassword: Api<Test123
+      uuid: ${captcha_uuid}
+      code: ${captcha_code}
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 密码不能包含非法字符

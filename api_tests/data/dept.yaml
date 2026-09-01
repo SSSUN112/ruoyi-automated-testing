@@ -1,0 +1,364 @@
+dept_exclude_cases:
+- id: DEPT-EXCLUDE-001
+  smoke: true
+  title: 获取编辑部门下拉树
+  request:
+    auth: true
+    dept_id: 101
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - data
+  list_assert:
+    rows_field: data
+    min_items: 1
+- id: DEPT-EXCLUDE-002
+  title: 未登录获取编辑部门下拉树
+  request:
+    auth: false
+    dept_id: 101
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+- id: DEPT-EXCLUDE-003
+  title: 不存在部门ID获取编辑部门下拉树
+  request:
+    auth: true
+    dept_id: 999999
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - data
+  list_assert:
+    rows_field: data
+    min_items: 1
+dept_list_cases:
+- id: DEPT-LIST-001
+  smoke: true
+  title: 获取部门列表
+  request:
+    auth: true
+    params: {}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - data
+  list_assert:
+    rows_field: data
+    min_items: 1
+- id: DEPT-LIST-002
+  title: 未登录获取部门列表
+  request:
+    auth: false
+    params: {}
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+- id: DEPT-LIST-003
+  title: 按不存在部门名称查询部门列表
+  request:
+    auth: true
+    params:
+      deptName: not_exists_${unique}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - data
+  list_assert:
+    rows_field: data
+    min_items: 0
+dept_create_cases:
+- id: DEPT-CREATE-001
+  smoke: true
+  title: 新增部门
+  request:
+    auth: true
+    payload:
+      parentId: 101
+      deptName: ${unique_dept_name}
+      orderNum: 99
+      leader: 接口自动化
+      phone: '13800138000'
+      email: api_auto_dept@example.com
+      status: '0'
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 新增成功
+  database:
+    sql: 'SELECT dept_id, dept_name, parent_id, status, del_flag FROM sys_dept WHERE dept_name = %s AND parent_id = %s LIMIT
+      1
+
+      '
+    params:
+    - ${unique_dept_name}
+    - 101
+    expected_fields:
+      dept_name: ${unique_dept_name}
+      parent_id: 101
+      status: '0'
+      del_flag: '0'
+- id: DEPT-CREATE-002
+  title: 新增同级部门名称已存在
+  request:
+    auth: true
+    payload:
+      parentId: 101
+      deptName: 测试部门
+      orderNum: 99
+      leader: 接口自动化
+      phone: '13800138000'
+      email: api_auto_dept@example.com
+      status: '0'
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 部门名称已存在
+- id: DEPT-CREATE-003
+  title: 新增部门时部门名称为空
+  request:
+    auth: true
+    payload:
+      parentId: 101
+      deptName: ''
+      orderNum: 99
+      leader: api_auto
+      phone: '13800138000'
+      email: api_auto_dept@example.com
+      status: '0'
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 部门名称不能为空
+- id: DEPT-CREATE-004
+  title: 新增部门时部门名称超过长度限制
+  request:
+    auth: true
+    payload:
+      parentId: 101
+      deptName: api_auto_dept_name_over_thirty_${unique}
+      orderNum: 99
+      leader: api_auto
+      phone: '13800138000'
+      email: api_auto_dept@example.com
+      status: '0'
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 部门名称长度不能超过30个字符
+- id: DEPT-CREATE-005
+  title: 新增部门时邮箱格式错误
+  request:
+    auth: true
+    payload:
+      parentId: 101
+      deptName: ${unique_dept_name}
+      orderNum: 99
+      leader: api_auto
+      phone: '13800138000'
+      email: bad-email
+      status: '0'
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 邮箱格式不正确
+- id: DEPT-CREATE-006
+  title: 新增部门时联系电话超过长度限制
+  request:
+    auth: true
+    payload:
+      parentId: 101
+      deptName: ${unique_dept_name}
+      orderNum: 99
+      leader: api_auto
+      phone: '138001380001'
+      email: api_auto_dept@example.com
+      status: '0'
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 联系电话长度不能超过11个字符
+dept_update_cases:
+- id: DEPT-UPDATE-001
+  smoke: true
+  title: 编辑临时部门
+  request:
+    auth: true
+    payload:
+      deptId: ${managed_dept_id}
+      parentId: 101
+      deptName: ${managed_dept_name}
+      orderNum: 98
+      leader: 接口自动化编辑
+      phone: '13800138001'
+      email: api_auto_dept_edit@example.com
+      status: '0'
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 更新成功
+  database:
+    sql: 'SELECT dept_id, order_num, leader, phone, email FROM sys_dept WHERE dept_id = %s LIMIT 1
+
+      '
+    params:
+    - ${managed_dept_id}
+    expected_fields:
+      order_num: 98
+      leader: 接口自动化编辑
+      phone: '13800138001'
+      email: api_auto_dept_edit@example.com
+- id: DEPT-UPDATE-002
+  title: 编辑部门时上级部门选择自己
+  request:
+    auth: true
+    payload:
+      deptId: ${managed_dept_id}
+      parentId: ${managed_dept_id}
+      deptName: ${managed_dept_name}
+      orderNum: 99
+      leader: 接口自动化
+      phone: '13800138000'
+      email: api_auto_dept@example.com
+      status: '0'
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 上级部门不能是自己
+- id: DEPT-UPDATE-003
+  title: 编辑部门时部门名称为空
+  request:
+    auth: true
+    payload:
+      deptId: ${managed_dept_id}
+      parentId: 101
+      deptName: ''
+      orderNum: 99
+      leader: api_auto
+      phone: '13800138000'
+      email: api_auto_dept@example.com
+      status: '0'
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 部门名称不能为空
+- id: DEPT-UPDATE-004
+  title: 停用存在未停用子部门的部门
+  request:
+    auth: true
+    payload:
+      deptId: 101
+      parentId: 100
+      deptName: 深圳总公司
+      orderNum: 2
+      leader: 若依
+      phone: '15888888888'
+      email: ruoyi@163.com
+      status: '1'
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 该部门包含未停用的子部门
+dept_delete_cases:
+- id: DEPT-DELETE-001
+  smoke: true
+  title: 删除临时部门
+  request:
+    auth: true
+    dept_ids: ${managed_dept_id}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 删除成功
+  database:
+    sql: 'SELECT dept_id, del_flag FROM sys_dept WHERE dept_id = %s LIMIT 1
+
+      '
+    params:
+    - ${managed_dept_id}
+    expected_fields:
+      del_flag: '2'
+- id: DEPT-DELETE-002
+  title: 删除存在下级部门的部门
+  request:
+    auth: true
+    dept_ids: 101
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 存在下级部门
+- id: DEPT-DELETE-003
+  title: 删除存在用户的部门
+  request:
+    auth: true
+    dept_ids: 105
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 部门存在用户
+- id: DEPT-DELETE-004
+  title: 删除部门时部门ID为空
+  request:
+    auth: true
+    dept_ids: ''
+  expected:
+    http_status: 404
+dept_detail_cases:
+- id: DEPT-DETAIL-001
+  smoke: true
+  title: 获取部门详情
+  request:
+    auth: true
+    dept_id: 105
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - data
+- id: DEPT-DETAIL-002
+  title: 未登录获取部门详情
+  request:
+    auth: false
+    dept_id: 105
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+- id: DEPT-DETAIL-003
+  title: 获取不存在部门详情
+  request:
+    auth: true
+    dept_id: 999999
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - data

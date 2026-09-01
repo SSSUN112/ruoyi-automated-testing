@@ -1,0 +1,1718 @@
+<?xml version='1.0' encoding='utf-8'?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="RuoYi 角色菜单权限读写流程压测" enabled="true">
+      <stringProp name="TestPlan.comments">低并发验证新增菜单、新增角色、新增用户、普通用户权限变化、分配菜单和清理链路。</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="protocol" elementType="Argument">
+            <stringProp name="Argument.name">protocol</stringProp>
+            <stringProp name="Argument.value">${__P(protocol,http)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="server" elementType="Argument">
+            <stringProp name="Argument.name">server</stringProp>
+            <stringProp name="Argument.value">${__P(server,127.0.0.1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="port" elementType="Argument">
+            <stringProp name="Argument.name">port</stringProp>
+            <stringProp name="Argument.value">${__P(port,19099)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="username" elementType="Argument">
+            <stringProp name="Argument.name">username</stringProp>
+            <stringProp name="Argument.value">${__P(username,admin)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="password" elementType="Argument">
+            <stringProp name="Argument.name">password</stringProp>
+            <stringProp name="Argument.value">${__P(password,admin123)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="redis_host" elementType="Argument">
+            <stringProp name="Argument.name">redis_host</stringProp>
+            <stringProp name="Argument.value">${__P(redis_host,127.0.0.1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="redis_port" elementType="Argument">
+            <stringProp name="Argument.name">redis_port</stringProp>
+            <stringProp name="Argument.value">${__P(redis_port,16379)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="redis_password" elementType="Argument">
+            <stringProp name="Argument.name">redis_password</stringProp>
+            <stringProp name="Argument.value">${__P(redis_password,)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="redis_db" elementType="Argument">
+            <stringProp name="Argument.name">redis_db</stringProp>
+            <stringProp name="Argument.value">${__P(redis_db,2)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="write_threads" elementType="Argument">
+            <stringProp name="Argument.name">write_threads</stringProp>
+            <stringProp name="Argument.value">${__P(write_threads,${__P(threads,1)})}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="write_ramp_up" elementType="Argument">
+            <stringProp name="Argument.name">write_ramp_up</stringProp>
+            <stringProp name="Argument.value">${__P(write_ramp_up,${__P(ramp_up,5)})}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="write_loop_count" elementType="Argument">
+            <stringProp name="Argument.name">write_loop_count</stringProp>
+            <stringProp name="Argument.value">${__P(write_loop_count,${__P(loop_count,1)})}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="initial_password" elementType="Argument">
+            <stringProp name="Argument.name">initial_password</stringProp>
+            <stringProp name="Argument.value">${__P(initial_password,Api@Test123)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="user_dept_id" elementType="Argument">
+            <stringProp name="Argument.name">user_dept_id</stringProp>
+            <stringProp name="Argument.value">${__P(user_dept_id,105)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="user_post_id" elementType="Argument">
+            <stringProp name="Argument.name">user_post_id</stringProp>
+            <stringProp name="Argument.value">${__P(user_post_id,4)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="parent_dept_id" elementType="Argument">
+            <stringProp name="Argument.name">parent_dept_id</stringProp>
+            <stringProp name="Argument.value">${__P(parent_dept_id,101)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="menu_parent_id" elementType="Argument">
+            <stringProp name="Argument.name">menu_parent_id</stringProp>
+            <stringProp name="Argument.value">${__P(menu_parent_id,1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+    </TestPlan>
+    <hashTree>
+      <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="00 登录准备线程组">
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">stoptest</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="循环控制器">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </SetupThreadGroup>
+      <hashTree>
+        <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP 请求默认值" enabled="true">
+          <stringProp name="HTTPSampler.connect_timeout">${__P(connect_timeout,5000)}</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">${__P(response_timeout,10000)}</stringProp>
+          <stringProp name="HTTPSampler.domain">${server}</stringProp>
+          <stringProp name="HTTPSampler.port">${port}</stringProp>
+          <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
+            <collectionProp name="Arguments.arguments" />
+          </elementProp>
+          <stringProp name="HTTPSampler.implementation" />
+        </ConfigTestElement>
+        <hashTree />
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="01 获取图片验证码" enabled="true">
+          <stringProp name="HTTPSampler.path">/captchaImage</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
+            <collectionProp name="Arguments.arguments" />
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取验证码 uuid" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">captcha_uuid;captcha_enabled</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.uuid;$.captchaEnabled</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND;true</stringProp>
+          </JSONPostProcessor>
+          <hashTree />
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="从 Redis 读取验证码答案" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+if (vars.get('captcha_enabled') == 'false') {
+    vars.put('captcha_code', '')
+    return
+}
+
+def uuid = vars.get('captcha_uuid')
+if (!uuid || uuid == 'NOT_FOUND') {
+    throw new AssertionError('验证码 uuid 提取失败')
+}
+
+def socket = new Socket(vars.get('redis_host'), vars.get('redis_port') as int)
+socket.soTimeout = 5000
+def input = socket.getInputStream()
+def output = socket.getOutputStream()
+
+def readLine = {
+    def buffer = new ByteArrayOutputStream()
+    int previous = -1
+    int current
+    while ((current = input.read()) != -1) {
+        if (previous == 13 &amp;&amp; current == 10) {
+            def bytes = buffer.toByteArray()
+            return new String(bytes, 0, bytes.length - 1, 'UTF-8')
+        }
+        buffer.write(current)
+        previous = current
+    }
+    throw new EOFException('Redis 响应读取失败')
+}
+
+def readFixedBytes = { int length -&gt;
+    byte[] bytes = new byte[length]
+    int offset = 0
+    while (offset &lt; length) {
+        int count = input.read(bytes, offset, length - offset)
+        if (count &lt; 0) {
+            throw new EOFException('Redis bulk string 读取失败')
+        }
+        offset += count
+    }
+    input.read()
+    input.read()
+    return bytes
+}
+
+def readResp
+readResp = {
+    int prefix = input.read()
+    if (prefix &lt; 0) {
+        throw new EOFException('Redis 无响应')
+    }
+
+    switch ((char) prefix) {
+        case '+':
+            return readLine()
+        case '-':
+            throw new RuntimeException('Redis 错误：' + readLine())
+        case ':':
+            return readLine()
+        case '$':
+            int length = readLine() as int
+            if (length == -1) {
+                return null
+            }
+            return new String(readFixedBytes(length), 'UTF-8')
+        case '*':
+            int count = readLine() as int
+            def values = []
+            count.times { values &lt;&lt; readResp() }
+            return values
+        default:
+            throw new RuntimeException('未知 Redis 响应类型：' + ((char) prefix))
+    }
+}
+
+def sendCommand = { List&lt;String&gt; parts -&gt;
+    output.write(("*${parts.size()}\r\n").getBytes('UTF-8'))
+    parts.each { part -&gt;
+        byte[] bytes = part.getBytes('UTF-8')
+        output.write(('$' + bytes.length + '\r\n').getBytes('UTF-8'))
+        output.write(bytes)
+        output.write("\r\n".getBytes('UTF-8'))
+    }
+    output.flush()
+    return readResp()
+}
+
+try {
+    def password = vars.get('redis_password')
+    if (password) {
+        sendCommand(['AUTH', password])
+    }
+
+    def db = vars.get('redis_db')
+    if (db) {
+        sendCommand(['SELECT', db])
+    }
+
+    def redisKey = 'captcha_codes:' + uuid
+    def code = sendCommand(['GET', redisKey])
+    if (!code) {
+        throw new AssertionError('Redis 中未找到验证码：' + redisKey)
+    }
+
+    vars.put('captcha_code', code.toString())
+} finally {
+    socket.close()
+}
+</stringProp>
+          </JSR223PostProcessor>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="02 登录获取 token" enabled="true">
+          <stringProp name="HTTPSampler.path">/login</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="username" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">username</stringProp>
+                <stringProp name="Argument.value">${username}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+              <elementProp name="password" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">password</stringProp>
+                <stringProp name="Argument.value">${password}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+              <elementProp name="uuid" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">uuid</stringProp>
+                <stringProp name="Argument.value">${captcha_uuid}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+              <elementProp name="code" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">code</stringProp>
+                <stringProp name="Argument.value">${captcha_code}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="登录请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取登录 token" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">token</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.token</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree />
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="保存 token 到全局属性" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def token = vars.get('token')
+if (!token || token == 'NOT_FOUND') {
+    throw new AssertionError('登录 token 提取失败')
+}
+props.put('auth_token', token)
+</stringProp>
+          </JSR223PostProcessor>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言登录成功" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+              <stringProp name="110541305">token</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">登录响应应包含 code 200 和 token</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+        </hashTree>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="01 角色菜单权限读写流程线程组" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="循环控制器" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">${write_loop_count}</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${write_threads}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${write_ramp_up}</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration" />
+        <stringProp name="ThreadGroup.delay" />
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP 请求默认值" enabled="true">
+          <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
+          <stringProp name="HTTPSampler.domain">${server}</stringProp>
+          <stringProp name="HTTPSampler.port">${port}</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">${__P(connect_timeout,5000)}</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">${__P(response_timeout,10000)}</stringProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments" />
+          </elementProp>
+        </ConfigTestElement>
+        <hashTree />
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="01 新增菜单" enabled="true">
+          <stringProp name="HTTPSampler.path">/system/menu</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{
+  "menuName": "${perf_menu_name}",
+  "parentId": ${menu_parent_id},
+  "orderNum": 99,
+  "path": "${perf_menu_path}",
+  "component": "system/menu/index",
+  "query": "",
+  "routeName": "",
+  "isFrame": 1,
+  "isCache": 0,
+  "menuType": "C",
+  "visible": "0",
+  "status": "0",
+  "perms": "${perf_menu_perm}",
+  "icon": "tree-table",
+  "remark": "performance role menu flow"
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="生成唯一权限流程测试数据" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def seed = (System.currentTimeMillis() % 100000000).toString() + ctx.getThreadNum() + vars.getIteration()
+def number = Math.abs(seed.hashCode())
+vars.put('perf_menu_name', '权限菜单_' + seed)
+vars.put('perf_menu_path', 'perm-' + seed)
+vars.put('perf_menu_perm', 'system:perf:permission:' + seed)
+vars.put('perf_role_name', '权限角色_' + seed)
+vars.put('perf_role_key', 'prole_' + seed)
+vars.put('perf_user_name', 'pperm_' + seed)
+vars.put('perf_user_nick', '权限用户_' + seed)
+vars.put('perf_user_email', 'pperm_' + seed + '@example.com')
+vars.put('perf_user_phone', '139' + String.format('%08d', number % 100000000))
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree />
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="读取管理员全局 token" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def token = props.get('auth_token')
+if (!token) {
+    throw new AssertionError('全局 auth_token 不存在，请先执行登录准备线程组')
+}
+vars.put('auth_token', token.toString())
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree />
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="新增菜单请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${auth_token}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言新增菜单成功" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="0">200</stringProp>
+              <stringProp name="1">新增成功</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">新增菜单响应应成功</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="02 查询菜单列表提取菜单ID" enabled="true">
+          <stringProp name="HTTPSampler.path">/system/menu/list</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="menuName" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">menuName</stringProp>
+                <stringProp name="Argument.value">${perf_menu_name}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="读取管理员全局 token" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def token = props.get('auth_token')
+if (!token) {
+    throw new AssertionError('全局 auth_token 不存在，请先执行登录准备线程组')
+}
+vars.put('auth_token', token.toString())
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree />
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="查询菜单请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${auth_token}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取菜单 ID" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">menu_id</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.data[0].menuId</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言菜单列表包含新菜单" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="0">200</stringProp>
+              <stringProp name="1">${perf_menu_name}</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">菜单列表应包含新菜单</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="03 新增未分配新菜单权限的角色" enabled="true">
+          <stringProp name="HTTPSampler.path">/system/role</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{
+  "roleName": "${perf_role_name}",
+  "roleKey": "${perf_role_key}",
+  "roleSort": 99,
+  "status": "0",
+  "menuIds": [${menu_parent_id}],
+  "menuCheckStrictly": true,
+  "deptCheckStrictly": true,
+  "remark": "performance role without new menu"
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="读取管理员全局 token" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def token = props.get('auth_token')
+if (!token) {
+    throw new AssertionError('全局 auth_token 不存在，请先执行登录准备线程组')
+}
+vars.put('auth_token', token.toString())
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree />
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="新增角色请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${auth_token}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言新增角色成功" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="0">200</stringProp>
+              <stringProp name="1">新增成功</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">新增角色响应应成功</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="04 查询角色列表提取角色ID" enabled="true">
+          <stringProp name="HTTPSampler.path">/system/role/list</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="pageNum" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">pageNum</stringProp>
+                <stringProp name="Argument.value">1</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+              <elementProp name="pageSize" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">pageSize</stringProp>
+                <stringProp name="Argument.value">10</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+              <elementProp name="roleKey" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">roleKey</stringProp>
+                <stringProp name="Argument.value">${perf_role_key}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="读取管理员全局 token" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def token = props.get('auth_token')
+if (!token) {
+    throw new AssertionError('全局 auth_token 不存在，请先执行登录准备线程组')
+}
+vars.put('auth_token', token.toString())
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree />
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="查询角色请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${auth_token}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取角色 ID" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">role_id</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.rows[0].roleId</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言角色列表包含新角色" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="0">200</stringProp>
+              <stringProp name="1">${perf_role_key}</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">角色列表应包含新角色</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="05 新增绑定角色的普通用户" enabled="true">
+          <stringProp name="HTTPSampler.path">/system/user</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{
+  "deptId": ${user_dept_id},
+  "userName": "${perf_user_name}",
+  "nickName": "${perf_user_nick}",
+  "password": "${initial_password}",
+  "email": "${perf_user_email}",
+  "phonenumber": "${perf_user_phone}",
+  "sex": "2",
+  "status": "0",
+  "roleIds": [${role_id}],
+  "postIds": [${user_post_id}],
+  "remark": "performance permission user"
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="读取管理员全局 token" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def token = props.get('auth_token')
+if (!token) {
+    throw new AssertionError('全局 auth_token 不存在，请先执行登录准备线程组')
+}
+vars.put('auth_token', token.toString())
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree />
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="新增普通用户请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${auth_token}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言新增普通用户成功" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="0">200</stringProp>
+              <stringProp name="1">新增成功</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">新增普通用户响应应成功</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="06 查询普通用户列表提取用户ID" enabled="true">
+          <stringProp name="HTTPSampler.path">/system/user/list</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="pageNum" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">pageNum</stringProp>
+                <stringProp name="Argument.value">1</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+              <elementProp name="pageSize" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">pageSize</stringProp>
+                <stringProp name="Argument.value">10</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+              <elementProp name="userName" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">userName</stringProp>
+                <stringProp name="Argument.value">${perf_user_name}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="读取管理员全局 token" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def token = props.get('auth_token')
+if (!token) {
+    throw new AssertionError('全局 auth_token 不存在，请先执行登录准备线程组')
+}
+vars.put('auth_token', token.toString())
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree />
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="查询普通用户请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${auth_token}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取普通用户 ID" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">user_id</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.rows[0].userId</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言用户列表包含普通用户" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="0">200</stringProp>
+              <stringProp name="1">${perf_user_name}</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">用户列表应包含普通用户</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="07 普通用户获取验证码" enabled="true">
+          <stringProp name="HTTPSampler.path">/captchaImage</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments" />
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取普通用户验证码 uuid" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">captcha_uuid;captcha_enabled</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.uuid;$.captchaEnabled</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND;true</stringProp>
+          </JSONPostProcessor>
+          <hashTree />
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="从 Redis 读取验证码答案" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+if (vars.get('captcha_enabled') == 'false') {
+    vars.put('captcha_code', '')
+    return
+}
+
+def uuid = vars.get('captcha_uuid')
+if (!uuid || uuid == 'NOT_FOUND') {
+    throw new AssertionError('验证码 uuid 提取失败')
+}
+
+def socket = new Socket(vars.get('redis_host'), vars.get('redis_port') as int)
+socket.soTimeout = 5000
+def input = socket.getInputStream()
+def output = socket.getOutputStream()
+
+def readLine = {
+    def buffer = new ByteArrayOutputStream()
+    int previous = -1
+    int current
+    while ((current = input.read()) != -1) {
+        if (previous == 13 &amp;&amp; current == 10) {
+            def bytes = buffer.toByteArray()
+            return new String(bytes, 0, bytes.length - 1, 'UTF-8')
+        }
+        buffer.write(current)
+        previous = current
+    }
+    throw new EOFException('Redis 响应读取失败')
+}
+
+def readFixedBytes = { int length -&gt;
+    byte[] bytes = new byte[length]
+    int offset = 0
+    while (offset &lt; length) {
+        int count = input.read(bytes, offset, length - offset)
+        if (count &lt; 0) {
+            throw new EOFException('Redis bulk string 读取失败')
+        }
+        offset += count
+    }
+    input.read()
+    input.read()
+    return bytes
+}
+
+def readResp
+readResp = {
+    int prefix = input.read()
+    if (prefix &lt; 0) {
+        throw new EOFException('Redis 无响应')
+    }
+
+    switch ((char) prefix) {
+        case '+':
+            return readLine()
+        case '-':
+            throw new RuntimeException('Redis 错误：' + readLine())
+        case ':':
+            return readLine()
+        case '$':
+            int length = readLine() as int
+            if (length == -1) {
+                return null
+            }
+            return new String(readFixedBytes(length), 'UTF-8')
+        case '*':
+            int count = readLine() as int
+            def values = []
+            count.times { values &lt;&lt; readResp() }
+            return values
+        default:
+            throw new RuntimeException('未知 Redis 响应类型：' + ((char) prefix))
+    }
+}
+
+def sendCommand = { List&lt;String&gt; parts -&gt;
+    output.write(("*${parts.size()}\r\n").getBytes('UTF-8'))
+    parts.each { part -&gt;
+        byte[] bytes = part.getBytes('UTF-8')
+        output.write(('$' + bytes.length + '\r\n').getBytes('UTF-8'))
+        output.write(bytes)
+        output.write("\r\n".getBytes('UTF-8'))
+    }
+    output.flush()
+    return readResp()
+}
+
+try {
+    def password = vars.get('redis_password')
+    if (password) {
+        sendCommand(['AUTH', password])
+    }
+
+    def db = vars.get('redis_db')
+    if (db) {
+        sendCommand(['SELECT', db])
+    }
+
+    def redisKey = 'captcha_codes:' + uuid
+    def code = sendCommand(['GET', redisKey])
+    if (!code) {
+        throw new AssertionError('Redis 中未找到验证码：' + redisKey)
+    }
+
+    vars.put('captcha_code', code.toString())
+} finally {
+    socket.close()
+}
+</stringProp>
+          </JSR223PostProcessor>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="08 普通用户登录获取 token" enabled="true">
+          <stringProp name="HTTPSampler.path">/login</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="username" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">username</stringProp>
+                <stringProp name="Argument.value">${perf_user_name}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+              <elementProp name="password" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">password</stringProp>
+                <stringProp name="Argument.value">${initial_password}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+              <elementProp name="uuid" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">uuid</stringProp>
+                <stringProp name="Argument.value">${captcha_uuid}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+              <elementProp name="code" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">code</stringProp>
+                <stringProp name="Argument.value">${captcha_code}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="普通用户登录请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取普通用户 token" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">normal_token</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.token</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree />
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="保存普通用户 token" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def token = vars.get('normal_token')
+if (!token || token == 'NOT_FOUND') {
+    throw new AssertionError('普通用户 token 提取失败')
+}
+vars.put('normal_auth_token', token.toString())
+</stringProp>
+          </JSR223PostProcessor>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言普通用户登录成功" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="0">200</stringProp>
+              <stringProp name="1">token</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">普通用户登录应成功</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="09 分配前获取普通用户权限" enabled="true">
+          <stringProp name="HTTPSampler.path">/getInfo</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments" />
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="普通用户权限请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${normal_auth_token}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言获取普通用户信息成功" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="0">200</stringProp>
+              <stringProp name="1">permissions</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">获取普通用户信息应成功</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="断言分配前没有新权限" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def json = new groovy.json.JsonSlurper().parseText(prev.getResponseDataAsString())
+def perms = json.permissions ?: []
+if (perms.contains(vars.get('perf_menu_perm'))) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage('分配前普通用户不应拥有权限：' + vars.get('perf_menu_perm'))
+}
+</stringProp>
+          </JSR223Assertion>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="10 分配前获取普通用户菜单" enabled="true">
+          <stringProp name="HTTPSampler.path">/getRouters</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments" />
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="普通用户菜单请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${normal_auth_token}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言获取普通用户菜单成功" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="0">200</stringProp>
+              <stringProp name="1">data</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">获取普通用户菜单应成功</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="断言分配前没有新菜单" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def json = new groovy.json.JsonSlurper().parseText(prev.getResponseDataAsString())
+def target = vars.get('perf_menu_name')
+def containsTitle
+containsTitle = { node -&gt;
+    if (node instanceof Map) {
+        def meta = node.meta ?: [:]
+        if (meta.title == target) { return true }
+        def children = node.children ?: []
+        return children.any { containsTitle(it) }
+    }
+    return false
+}
+def routes = json.data ?: []
+if (routes.any { containsTitle(it) }) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage('分配前普通用户不应看到菜单：' + target)
+}
+</stringProp>
+          </JSR223Assertion>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="11 分配菜单给角色" enabled="true">
+          <stringProp name="HTTPSampler.path">/system/role</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">PUT</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{
+  "roleId": "${role_id}",
+  "roleName": "${perf_role_name}",
+  "roleKey": "${perf_role_key}",
+  "roleSort": 99,
+  "status": "0",
+  "menuIds": [${menu_parent_id}, ${menu_id}],
+  "menuCheckStrictly": true,
+  "deptCheckStrictly": true,
+  "remark": "performance role with new menu"
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="读取管理员全局 token" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def token = props.get('auth_token')
+if (!token) {
+    throw new AssertionError('全局 auth_token 不存在，请先执行登录准备线程组')
+}
+vars.put('auth_token', token.toString())
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree />
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="分配菜单请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${auth_token}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言分配菜单成功" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="0">200</stringProp>
+              <stringProp name="1">更新成功</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">分配菜单响应应成功</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="12 分配后普通用户获取验证码" enabled="true">
+          <stringProp name="HTTPSampler.path">/captchaImage</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments" />
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取普通用户验证码 uuid" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">captcha_uuid;captcha_enabled</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.uuid;$.captchaEnabled</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND;true</stringProp>
+          </JSONPostProcessor>
+          <hashTree />
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="从 Redis 读取验证码答案" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+if (vars.get('captcha_enabled') == 'false') {
+    vars.put('captcha_code', '')
+    return
+}
+
+def uuid = vars.get('captcha_uuid')
+if (!uuid || uuid == 'NOT_FOUND') {
+    throw new AssertionError('验证码 uuid 提取失败')
+}
+
+def socket = new Socket(vars.get('redis_host'), vars.get('redis_port') as int)
+socket.soTimeout = 5000
+def input = socket.getInputStream()
+def output = socket.getOutputStream()
+
+def readLine = {
+    def buffer = new ByteArrayOutputStream()
+    int previous = -1
+    int current
+    while ((current = input.read()) != -1) {
+        if (previous == 13 &amp;&amp; current == 10) {
+            def bytes = buffer.toByteArray()
+            return new String(bytes, 0, bytes.length - 1, 'UTF-8')
+        }
+        buffer.write(current)
+        previous = current
+    }
+    throw new EOFException('Redis 响应读取失败')
+}
+
+def readFixedBytes = { int length -&gt;
+    byte[] bytes = new byte[length]
+    int offset = 0
+    while (offset &lt; length) {
+        int count = input.read(bytes, offset, length - offset)
+        if (count &lt; 0) {
+            throw new EOFException('Redis bulk string 读取失败')
+        }
+        offset += count
+    }
+    input.read()
+    input.read()
+    return bytes
+}
+
+def readResp
+readResp = {
+    int prefix = input.read()
+    if (prefix &lt; 0) {
+        throw new EOFException('Redis 无响应')
+    }
+
+    switch ((char) prefix) {
+        case '+':
+            return readLine()
+        case '-':
+            throw new RuntimeException('Redis 错误：' + readLine())
+        case ':':
+            return readLine()
+        case '$':
+            int length = readLine() as int
+            if (length == -1) {
+                return null
+            }
+            return new String(readFixedBytes(length), 'UTF-8')
+        case '*':
+            int count = readLine() as int
+            def values = []
+            count.times { values &lt;&lt; readResp() }
+            return values
+        default:
+            throw new RuntimeException('未知 Redis 响应类型：' + ((char) prefix))
+    }
+}
+
+def sendCommand = { List&lt;String&gt; parts -&gt;
+    output.write(("*${parts.size()}\r\n").getBytes('UTF-8'))
+    parts.each { part -&gt;
+        byte[] bytes = part.getBytes('UTF-8')
+        output.write(('$' + bytes.length + '\r\n').getBytes('UTF-8'))
+        output.write(bytes)
+        output.write("\r\n".getBytes('UTF-8'))
+    }
+    output.flush()
+    return readResp()
+}
+
+try {
+    def password = vars.get('redis_password')
+    if (password) {
+        sendCommand(['AUTH', password])
+    }
+
+    def db = vars.get('redis_db')
+    if (db) {
+        sendCommand(['SELECT', db])
+    }
+
+    def redisKey = 'captcha_codes:' + uuid
+    def code = sendCommand(['GET', redisKey])
+    if (!code) {
+        throw new AssertionError('Redis 中未找到验证码：' + redisKey)
+    }
+
+    vars.put('captcha_code', code.toString())
+} finally {
+    socket.close()
+}
+</stringProp>
+          </JSR223PostProcessor>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="13 分配后普通用户登录获取 token" enabled="true">
+          <stringProp name="HTTPSampler.path">/login</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="username" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">username</stringProp>
+                <stringProp name="Argument.value">${perf_user_name}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+              <elementProp name="password" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">password</stringProp>
+                <stringProp name="Argument.value">${initial_password}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+              <elementProp name="uuid" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">uuid</stringProp>
+                <stringProp name="Argument.value">${captcha_uuid}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+              <elementProp name="code" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.name">code</stringProp>
+                <stringProp name="Argument.value">${captcha_code}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="普通用户登录请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取普通用户 token" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">normal_token</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.token</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree />
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="保存普通用户 token" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def token = vars.get('normal_token')
+if (!token || token == 'NOT_FOUND') {
+    throw new AssertionError('普通用户 token 提取失败')
+}
+vars.put('normal_auth_token', token.toString())
+</stringProp>
+          </JSR223PostProcessor>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言普通用户登录成功" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="0">200</stringProp>
+              <stringProp name="1">token</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">普通用户登录应成功</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="14 分配后获取普通用户权限" enabled="true">
+          <stringProp name="HTTPSampler.path">/getInfo</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments" />
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="分配后普通用户权限请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${normal_auth_token}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言分配后获取普通用户信息成功" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="0">200</stringProp>
+              <stringProp name="1">permissions</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">获取普通用户信息应成功</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="断言分配后拥有新权限" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def json = new groovy.json.JsonSlurper().parseText(prev.getResponseDataAsString())
+def perms = json.permissions ?: []
+if (!perms.contains(vars.get('perf_menu_perm'))) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage('分配后普通用户应拥有权限：' + vars.get('perf_menu_perm'))
+}
+</stringProp>
+          </JSR223Assertion>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="15 分配后获取普通用户菜单" enabled="true">
+          <stringProp name="HTTPSampler.path">/getRouters</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments" />
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="分配后普通用户菜单请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${normal_auth_token}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言分配后获取普通用户菜单成功" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="0">200</stringProp>
+              <stringProp name="1">data</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">获取普通用户菜单应成功</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="断言分配后拥有新菜单" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def json = new groovy.json.JsonSlurper().parseText(prev.getResponseDataAsString())
+def target = vars.get('perf_menu_name')
+def containsTitle
+containsTitle = { node -&gt;
+    if (node instanceof Map) {
+        def meta = node.meta ?: [:]
+        if (meta.title == target) { return true }
+        def children = node.children ?: []
+        return children.any { containsTitle(it) }
+    }
+    return false
+}
+def routes = json.data ?: []
+if (!routes.any { containsTitle(it) }) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage('分配后普通用户应看到菜单：' + target)
+}
+</stringProp>
+          </JSR223Assertion>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="16 删除普通用户清理数据" enabled="true">
+          <stringProp name="HTTPSampler.path">/system/user/${user_id}</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">DELETE</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments" />
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="读取管理员全局 token" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def token = props.get('auth_token')
+if (!token) {
+    throw new AssertionError('全局 auth_token 不存在，请先执行登录准备线程组')
+}
+vars.put('auth_token', token.toString())
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree />
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="删除普通用户请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${auth_token}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言删除普通用户成功" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="0">200</stringProp>
+              <stringProp name="1">删除成功</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">删除普通用户响应应成功</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="17 删除角色清理数据" enabled="true">
+          <stringProp name="HTTPSampler.path">/system/role/${role_id}</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">DELETE</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments" />
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="读取管理员全局 token" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def token = props.get('auth_token')
+if (!token) {
+    throw new AssertionError('全局 auth_token 不存在，请先执行登录准备线程组')
+}
+vars.put('auth_token', token.toString())
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree />
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="删除角色请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${auth_token}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言删除角色成功" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="0">200</stringProp>
+              <stringProp name="1">删除成功</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">删除角色响应应成功</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="18 删除菜单清理数据" enabled="true">
+          <stringProp name="HTTPSampler.path">/system/menu/${menu_id}</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">DELETE</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+            <collectionProp name="Arguments.arguments" />
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="读取管理员全局 token" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def token = props.get('auth_token')
+if (!token) {
+    throw new AssertionError('全局 auth_token 不存在，请先执行登录准备线程组')
+}
+vars.put('auth_token', token.toString())
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree />
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="删除菜单请求头" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${auth_token}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言删除菜单成功" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="0">200</stringProp>
+              <stringProp name="1">删除成功</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">删除菜单响应应成功</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree />
+        </hashTree>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="查看结果树" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+            </value>
+          </objProp>
+          <stringProp name="filename" />
+        </ResultCollector>
+        <hashTree />
+        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="汇总报告" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+            </value>
+          </objProp>
+          <stringProp name="filename" />
+        </ResultCollector>
+        <hashTree />
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

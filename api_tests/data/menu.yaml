@@ -1,0 +1,458 @@
+menu_tree_cases:
+- id: MENU-TREE-001
+  smoke: true
+  title: 获取菜单树
+  request:
+    auth: true
+  expected:
+    http_status: 200
+    code: 200
+    required_fields:
+    - data
+  list_assert:
+    rows_field: data
+    min_items: 1
+- id: MENU-TREE-002
+  title: 未登录获取菜单树
+  request:
+    auth: false
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+menu_role_tree_cases:
+- id: MENU-ROLE-TREE-001
+  smoke: true
+  title: 获取普通角色菜单树
+  request:
+    auth: true
+    role_id: 2
+  expected:
+    http_status: 200
+    code: 200
+    required_fields:
+    - menus
+    - checkedKeys
+- id: MENU-ROLE-TREE-002
+  title: 未登录获取角色菜单树
+  request:
+    auth: false
+    role_id: 2
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+- id: MENU-ROLE-TREE-003
+  title: 不存在角色ID获取角色菜单树
+  request:
+    auth: true
+    role_id: 999999
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: NoneType
+menu_list_cases:
+- id: MENU-LIST-001
+  smoke: true
+  title: 获取菜单列表
+  request:
+    auth: true
+    params: {}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - data
+  list_assert:
+    rows_field: data
+    min_items: 1
+- id: MENU-LIST-002
+  title: 未登录获取菜单列表
+  request:
+    auth: false
+    params: {}
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+- id: MENU-LIST-003
+  title: 按不存在菜单名称查询菜单列表
+  request:
+    auth: true
+    params:
+      menuName: not_exists_${unique}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - data
+  list_assert:
+    rows_field: data
+    min_items: 0
+menu_create_cases:
+- id: MENU-CREATE-001
+  smoke: true
+  title: 新增菜单
+  request:
+    auth: true
+    payload:
+      menuName: ${unique_menu_name}
+      parentId: 1
+      orderNum: 99
+      path: ${unique_menu_path}
+      component: system/menu/index
+      query: ''
+      routeName: ''
+      isFrame: 1
+      isCache: 0
+      menuType: C
+      visible: '0'
+      status: '0'
+      perms: ${unique_menu_perms}
+      icon: tree-table
+      remark: 接口自动化新增菜单
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 新增成功
+  database:
+    sql: 'SELECT menu_id, menu_name, parent_id, path, perms, menu_type, status FROM sys_menu WHERE menu_name = %s LIMIT 1
+
+      '
+    params:
+    - ${unique_menu_name}
+    expected_fields:
+      menu_name: ${unique_menu_name}
+      parent_id: 1
+      path: ${unique_menu_path}
+      perms: ${unique_menu_perms}
+      menu_type: C
+      status: '0'
+- id: MENU-CREATE-002
+  title: 新增菜单名称已存在
+  request:
+    auth: true
+    payload:
+      menuName: 系统管理
+      parentId: 0
+      orderNum: 1
+      path: system
+      component: ''
+      query: ''
+      routeName: ''
+      isFrame: 1
+      isCache: 0
+      menuType: M
+      visible: '0'
+      status: '0'
+      perms: ''
+      icon: system
+      remark: 重复菜单名称
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 菜单名称已存在
+- id: MENU-CREATE-003
+  title: 新增菜单时菜单名称为空
+  request:
+    auth: true
+    payload:
+      parentId: 1
+      orderNum: 99
+      path: api-auto-menu-${unique}
+      component: system/menu/index
+      query: ''
+      routeName: ''
+      isFrame: 1
+      isCache: 0
+      menuType: C
+      visible: '0'
+      status: '0'
+      perms: system:api:auto:${unique}
+      icon: tree-table
+      remark: api automation negative case
+      menuName: ''
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 菜单名称不能为空
+- id: MENU-CREATE-004
+  title: 新增菜单时菜单名称超过长度限制
+  request:
+    auth: true
+    payload:
+      parentId: 1
+      orderNum: 99
+      path: api-auto-menu-${unique}
+      component: system/menu/index
+      query: ''
+      routeName: ''
+      isFrame: 1
+      isCache: 0
+      menuType: C
+      visible: '0'
+      status: '0'
+      perms: system:api:auto:${unique}
+      icon: tree-table
+      remark: api automation negative case
+      menuName: api_auto_menu_name_length_over_fifty_characters_${unique}_abcdefg
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 菜单名称长度不能超过50个字符
+- id: MENU-CREATE-005
+  title: 新增外链菜单时地址格式错误
+  request:
+    auth: true
+    payload:
+      parentId: 1
+      orderNum: 99
+      path: not-http-url
+      component: system/menu/index
+      query: ''
+      routeName: ''
+      isFrame: 0
+      isCache: 0
+      menuType: C
+      visible: '0'
+      status: '0'
+      perms: system:api:auto:${unique}
+      icon: tree-table
+      remark: api automation negative case
+      menuName: ${unique_menu_name}
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 地址必须以http(s)://开头
+- id: MENU-CREATE-006
+  title: 新增菜单时显示顺序为空
+  request:
+    auth: true
+    payload:
+      parentId: 1
+      orderNum: 99
+      path: api-auto-menu-${unique}
+      component: system/menu/index
+      query: ''
+      routeName: ''
+      isFrame: 1
+      isCache: 0
+      menuType: C
+      visible: '0'
+      status: '0'
+      perms: system:api:auto:permission:length:over:one:hundred:characters:${unique}:abcdefghijklmnopqrstuvwxyz0123456789
+      icon: tree-table
+      remark: api automation negative case
+      menuName: ${unique_menu_name}
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 权限标识长度不能超过100个字符
+menu_update_cases:
+- id: MENU-UPDATE-001
+  smoke: true
+  title: 编辑临时菜单
+  request:
+    auth: true
+    payload:
+      menuId: ${managed_menu_id}
+      menuName: ${managed_menu_name}
+      parentId: 1
+      orderNum: 98
+      path: ${unique_menu_path}
+      component: system/menu/index
+      query: ''
+      routeName: ''
+      isFrame: 1
+      isCache: 1
+      menuType: C
+      visible: '1'
+      status: '0'
+      perms: ${unique_menu_perms}
+      icon: edit
+      remark: 接口自动化编辑菜单
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 更新成功
+  database:
+    sql: 'SELECT menu_id, visible, is_cache, icon FROM sys_menu WHERE menu_id = %s LIMIT 1
+
+      '
+    params:
+    - ${managed_menu_id}
+    expected_fields:
+      visible: '1'
+      is_cache: 1
+      icon: edit
+- id: MENU-UPDATE-002
+  title: 编辑菜单时上级菜单选择自己
+  request:
+    auth: true
+    payload:
+      menuId: ${managed_menu_id}
+      menuName: ${managed_menu_name}
+      parentId: ${managed_menu_id}
+      orderNum: 99
+      path: ${unique_menu_path}
+      component: system/menu/index
+      query: ''
+      routeName: ''
+      isFrame: 1
+      isCache: 0
+      menuType: C
+      visible: '0'
+      status: '0'
+      perms: ${unique_menu_perms}
+      icon: tree-table
+      remark: 上级菜单选择自己
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 上级菜单不能选择自己
+- id: MENU-UPDATE-003
+  title: 编辑不存在的菜单
+  request:
+    auth: true
+    payload:
+      parentId: 1
+      orderNum: 99
+      path: api-auto-menu-${unique}
+      component: system/menu/index
+      query: ''
+      routeName: ''
+      isFrame: 1
+      isCache: 0
+      menuType: C
+      visible: '0'
+      status: '0'
+      perms: system:api:auto:${unique}
+      icon: tree-table
+      remark: api automation negative case
+      menuId: 999999
+      menuName: api_auto_not_exists_menu_${unique}
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 菜单不存在
+- id: MENU-UPDATE-004
+  title: 编辑外链菜单时地址格式错误
+  request:
+    auth: true
+    payload:
+      parentId: 1
+      orderNum: 99
+      path: not-http-url
+      component: system/menu/index
+      query: ''
+      routeName: ''
+      isFrame: 0
+      isCache: 0
+      menuType: C
+      visible: '0'
+      status: '0'
+      perms: system:api:auto:${unique}
+      icon: tree-table
+      remark: api automation negative case
+      menuId: ${managed_menu_id}
+      menuName: ${managed_menu_name}
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 地址必须以http(s)://开头
+menu_delete_cases:
+- id: MENU-DELETE-001
+  smoke: true
+  title: 删除临时菜单
+  request:
+    auth: true
+    menu_ids: ${managed_menu_id}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 删除成功
+  database:
+    assert: not_exists
+    sql: 'SELECT menu_id FROM sys_menu WHERE menu_id = %s LIMIT 1
+
+      '
+    params:
+    - ${managed_menu_id}
+- id: MENU-DELETE-002
+  title: 删除存在子菜单的目录
+  request:
+    auth: true
+    menu_ids: 1
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 存在子菜单
+- id: MENU-DELETE-003
+  title: 删除不存在的菜单
+  request:
+    auth: true
+    menu_ids: 999999
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 删除成功
+- id: MENU-DELETE-004
+  title: 删除菜单时菜单ID为空
+  request:
+    auth: true
+    menu_ids: ''
+  expected:
+    http_status: 404
+menu_detail_cases:
+- id: MENU-DETAIL-001
+  smoke: true
+  title: 获取菜单详情
+  request:
+    auth: true
+    menu_id: 102
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - data
+- id: MENU-DETAIL-002
+  title: 未登录获取菜单详情
+  request:
+    auth: false
+    menu_id: 102
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+- id: MENU-DETAIL-003
+  title: 获取不存在菜单详情
+  request:
+    auth: true
+    menu_id: 999999
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - data

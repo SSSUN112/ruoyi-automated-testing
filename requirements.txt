@@ -1,0 +1,8 @@
+pytest
+requests
+python-dotenv
+PyYAML
+PyMySQL
+allure-pytest
+playwright
+locust

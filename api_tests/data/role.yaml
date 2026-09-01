@@ -1,0 +1,712 @@
+role_list_cases:
+- id: ROLE-LIST-001
+  smoke: true
+  title: 按权限字符查询角色列表
+  request:
+    auth: true
+    params:
+      pageNum: 1
+      pageSize: 10
+      roleKey: common
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - rows
+    - total
+  page_assert:
+    min_rows: 1
+    min_total: 1
+  contains_assert:
+    rows_field: rows
+    field: roleKey
+    value: common
+- id: ROLE-LIST-002
+  title: 未登录获取角色列表
+  request:
+    auth: false
+    params:
+      pageNum: 1
+      pageSize: 10
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+- id: ROLE-LIST-003
+  title: 按不存在权限字符查询角色列表
+  request:
+    auth: true
+    params:
+      pageNum: 1
+      pageSize: 10
+      roleKey: not_exists_${unique}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - rows
+    - total
+  page_assert:
+    min_rows: 0
+    min_total: 0
+- id: ROLE-LIST-004
+  title: 角色列表分页每页一条
+  request:
+    auth: true
+    params:
+      pageNum: 1
+      pageSize: 1
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - rows
+    - total
+  page_assert:
+    min_rows: 1
+    min_total: 1
+
+role_create_cases:
+- id: ROLE-CREATE-001
+  smoke: true
+  title: 新增角色
+  request:
+    auth: true
+    payload:
+      roleName: auto_role_${unique}
+      roleKey: ${unique_role_key}
+      roleSort: 99
+      status: '0'
+      menuIds:
+      - 1
+      menuCheckStrictly: true
+      deptCheckStrictly: true
+      remark: api automation create role
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 新增成功
+  database:
+    sql: |
+      SELECT role_id, role_name, role_key, role_sort, status
+      FROM sys_role
+      WHERE role_key = %s AND del_flag = '0'
+      LIMIT 1
+    params:
+    - ${unique_role_key}
+    expected_fields:
+      role_name: auto_role_${unique}
+      role_key: ${unique_role_key}
+      role_sort: 99
+      status: '0'
+- id: ROLE-CREATE-002
+  title: 新增角色时角色名称已存在
+  request:
+    auth: true
+    payload:
+      roleName: 普通角色
+      roleKey: ${unique_role_key}
+      roleSort: 99
+      status: '0'
+      menuIds: []
+      menuCheckStrictly: true
+      deptCheckStrictly: true
+      remark: api automation duplicate role name
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 角色名称已存在
+- id: ROLE-CREATE-003
+  title: 新增角色时权限字符已存在
+  request:
+    auth: true
+    payload:
+      roleName: auto_role_${unique}
+      roleKey: common
+      roleSort: 99
+      status: '0'
+      menuIds: []
+      menuCheckStrictly: true
+      deptCheckStrictly: true
+      remark: api automation duplicate role key
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 角色权限已存在
+- id: ROLE-CREATE-004
+  title: 新增角色时角色名称为空
+  request:
+    auth: true
+    payload:
+      roleName: ''
+      roleKey: ${unique_role_key}
+      roleSort: 99
+      status: '0'
+      menuIds: []
+      menuCheckStrictly: true
+      deptCheckStrictly: true
+      remark: api automation empty role name
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 角色名称不能为空
+- id: ROLE-CREATE-005
+  title: 新增角色时权限字符为空
+  request:
+    auth: true
+    payload:
+      roleName: auto_role_${unique}
+      roleKey: ''
+      roleSort: 99
+      status: '0'
+      menuIds: []
+      menuCheckStrictly: true
+      deptCheckStrictly: true
+      remark: api automation empty role key
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 权限字符不能为空
+- id: ROLE-CREATE-006
+  title: 新增角色时显示顺序为空
+  request:
+    auth: true
+    payload:
+      roleName: auto_role_${unique}
+      roleKey: ${unique_role_key}
+      roleSort: null
+      status: '0'
+      menuIds: []
+      menuCheckStrictly: true
+      deptCheckStrictly: true
+      remark: api automation empty role sort
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 显示顺序不能为空
+- id: ROLE-CREATE-007
+  title: 新增角色时角色名称超过长度限制
+  request:
+    auth: true
+    payload:
+      roleName: api_auto_role_name_length_over_thirty_${unique}
+      roleKey: ${unique_role_key}
+      roleSort: 99
+      status: '0'
+      menuIds: []
+      menuCheckStrictly: true
+      deptCheckStrictly: true
+      remark: api automation long role name
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 角色名称长度不能超过30个字符
+
+role_update_cases:
+- id: ROLE-UPDATE-001
+  smoke: true
+  title: 编辑临时角色
+  request:
+    auth: true
+    payload:
+      roleId: ${managed_role_id}
+      roleName: ${managed_role_name}_edit
+      roleKey: ${managed_role_key}
+      roleSort: 98
+      status: '1'
+      menuIds:
+      - 1
+      menuCheckStrictly: true
+      deptCheckStrictly: true
+      remark: api automation update role
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 更新成功
+  database:
+    sql: |
+      SELECT role_id, role_name, role_sort, status
+      FROM sys_role
+      WHERE role_id = %s AND del_flag = '0'
+      LIMIT 1
+    params:
+    - ${managed_role_id}
+    expected_fields:
+      role_name: ${managed_role_name}_edit
+      role_sort: 98
+      status: '1'
+- id: ROLE-UPDATE-002
+  title: 编辑不存在的角色
+  request:
+    auth: true
+    payload:
+      roleId: 999999
+      roleName: not_exists_role
+      roleKey: not_exists_key
+      roleSort: 99
+      status: '0'
+      menuIds: []
+      menuCheckStrictly: true
+      deptCheckStrictly: true
+      remark: api automation not exists role
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: expected to update 1 row
+- id: ROLE-UPDATE-003
+  title: 编辑角色时角色名称已存在
+  request:
+    auth: true
+    payload:
+      roleId: ${managed_role_id}
+      roleName: 普通角色
+      roleKey: ${managed_role_key}
+      roleSort: 99
+      status: '0'
+      menuIds: []
+      menuCheckStrictly: true
+      deptCheckStrictly: true
+      remark: api automation duplicate role name
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 角色名称已存在
+- id: ROLE-UPDATE-004
+  title: 编辑角色时权限字符为空
+  request:
+    auth: true
+    payload:
+      roleId: ${managed_role_id}
+      roleName: ${managed_role_name}
+      roleKey: ''
+      roleSort: 99
+      status: '0'
+      menuIds: []
+      menuCheckStrictly: true
+      deptCheckStrictly: true
+      remark: api automation empty role key
+  expected:
+    http_status: 200
+    code: 601
+    success: false
+    msg_contains: 权限字符不能为空
+- id: ROLE-UPDATE-005
+  title: 编辑超级管理员角色
+  request:
+    auth: true
+    payload:
+      roleId: 1
+      roleName: 超级管理员
+      roleKey: admin
+      roleSort: 1
+      status: '0'
+      menuIds: []
+      menuCheckStrictly: true
+      deptCheckStrictly: true
+      remark: api automation update admin role
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 不允许操作超级管理员角色
+
+role_change_status_cases:
+- id: ROLE-STATUS-001
+  smoke: true
+  title: 修改临时角色状态为停用
+  request:
+    auth: true
+    payload:
+      roleId: ${managed_role_id}
+      status: '1'
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 更新成功
+  database:
+    sql: |
+      SELECT role_id, status FROM sys_role WHERE role_id = %s LIMIT 1
+    params:
+    - ${managed_role_id}
+    expected_fields:
+      status: '1'
+- id: ROLE-STATUS-002
+  title: 修改超级管理员角色状态
+  request:
+    auth: true
+    payload:
+      roleId: 1
+      status: '1'
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 不允许操作超级管理员角色
+
+role_data_scope_cases:
+- id: ROLE-DATASCOPE-001
+  smoke: true
+  title: 修改临时角色数据权限为自定义部门
+  request:
+    auth: true
+    payload:
+      roleId: ${managed_role_id}
+      dataScope: '2'
+      deptIds:
+      - 105
+      deptCheckStrictly: true
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 分配成功
+  database:
+    sql: |
+      SELECT role_id, data_scope FROM sys_role WHERE role_id = %s LIMIT 1
+    params:
+    - ${managed_role_id}
+    expected_fields:
+      data_scope: '2'
+- id: ROLE-DATASCOPE-002
+  title: 修改不存在角色的数据权限
+  request:
+    auth: true
+    payload:
+      roleId: 999999
+      dataScope: '2'
+      deptIds:
+      - 105
+      deptCheckStrictly: true
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 角色不存在
+
+role_delete_cases:
+- id: ROLE-DELETE-001
+  smoke: true
+  title: 删除临时角色
+  request:
+    auth: true
+    role_ids: ${managed_role_id}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 删除成功
+  database:
+    assert: not_exists
+    sql: |
+      SELECT role_id FROM sys_role WHERE role_id = %s AND del_flag = '0' LIMIT 1
+    params:
+    - ${managed_role_id}
+- id: ROLE-DELETE-002
+  title: 删除已分配用户的角色
+  request:
+    auth: true
+    role_ids: 2
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 已分配
+- id: ROLE-DELETE-003
+  title: 删除超级管理员角色
+  request:
+    auth: true
+    role_ids: 1
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 不允许操作超级管理员角色
+- id: ROLE-DELETE-004
+  title: 删除角色时角色ID为空
+  request:
+    auth: true
+    role_ids: ''
+  expected:
+    http_status: 404
+
+role_detail_cases:
+- id: ROLE-DETAIL-001
+  smoke: true
+  title: 获取普通角色详情
+  request:
+    auth: true
+    role_id: 2
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - data
+- id: ROLE-DETAIL-002
+  title: 未登录获取角色详情
+  request:
+    auth: false
+    role_id: 2
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+- id: ROLE-DETAIL-003
+  title: 获取不存在角色详情
+  request:
+    auth: true
+    role_id: 999999
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - data
+
+role_dept_tree_cases:
+- id: ROLE-DEPT-TREE-001
+  smoke: true
+  title: 获取普通角色数据权限部门树
+  request:
+    auth: true
+    role_id: 2
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - depts
+    - checkedKeys
+- id: ROLE-DEPT-TREE-002
+  title: 未登录获取角色数据权限部门树
+  request:
+    auth: false
+    role_id: 2
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+- id: ROLE-DEPT-TREE-003
+  title: 获取不存在角色的数据权限部门树
+  request:
+    auth: true
+    role_id: 999999
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - depts
+    - checkedKeys
+
+role_allocated_user_cases:
+- id: ROLE-ALLOCATED-001
+  smoke: true
+  title: 获取普通角色已分配用户列表
+  request:
+    auth: true
+    params:
+      pageNum: 1
+      pageSize: 10
+      roleId: 2
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - rows
+    - total
+  page_assert:
+    min_rows: 1
+    min_total: 1
+- id: ROLE-ALLOCATED-002
+  title: 未登录获取已分配用户列表
+  request:
+    auth: false
+    params:
+      pageNum: 1
+      pageSize: 10
+      roleId: 2
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+
+role_unallocated_user_cases:
+- id: ROLE-UNALLOCATED-001
+  smoke: true
+  title: 获取普通角色未分配用户列表
+  request:
+    auth: true
+    params:
+      pageNum: 1
+      pageSize: 10
+      roleId: 2
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    required_fields:
+    - rows
+    - total
+  page_assert:
+    min_rows: 0
+    min_total: 0
+- id: ROLE-UNALLOCATED-002
+  title: 未登录获取未分配用户列表
+  request:
+    auth: false
+    params:
+      pageNum: 1
+      pageSize: 10
+      roleId: 2
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
+
+role_assign_user_cases:
+- id: ROLE-ASSIGN-001
+  smoke: true
+  title: 分配临时用户给临时角色
+  request:
+    auth: true
+    params:
+      roleId: ${managed_role_id}
+      userIds: ${managed_user_id}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 新增成功
+  database:
+    sql: |
+      SELECT user_id, role_id
+      FROM sys_user_role
+      WHERE user_id = %s AND role_id = %s
+      LIMIT 1
+    params:
+    - ${managed_user_id}
+    - ${managed_role_id}
+- id: ROLE-ASSIGN-002
+  title: 分配用户给角色时角色ID为空
+  request:
+    auth: true
+    params:
+      roleId: null
+      userIds: ${managed_user_id}
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 不满足新增条件
+
+role_cancel_user_cases:
+- id: ROLE-CANCEL-001
+  smoke: true
+  title: 取消临时用户分配的临时角色
+  pre_assign: true
+  request:
+    auth: true
+    payload:
+      roleId: ${managed_role_id}
+      userId: ${managed_user_id}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 删除成功
+  database:
+    assert: not_exists
+    sql: |
+      SELECT user_id, role_id
+      FROM sys_user_role
+      WHERE user_id = %s AND role_id = %s
+      LIMIT 1
+    params:
+    - ${managed_user_id}
+    - ${managed_role_id}
+- id: ROLE-CANCEL-002
+  title: 取消用户角色分配时参数为空
+  request:
+    auth: true
+    payload:
+      roleId: null
+      userId: null
+  expected:
+    http_status: 200
+    code: 500
+    success: false
+    msg_contains: 传入用户角色关联信息为空
+
+role_batch_cancel_user_cases:
+- id: ROLE-BATCH-CANCEL-001
+  smoke: true
+  title: 批量取消临时用户分配的临时角色
+  pre_assign: true
+  request:
+    auth: true
+    params:
+      roleId: ${managed_role_id}
+      userIds: ${managed_user_id}
+  expected:
+    http_status: 200
+    code: 200
+    success: true
+    msg_contains: 删除成功
+  database:
+    assert: not_exists
+    sql: |
+      SELECT user_id, role_id
+      FROM sys_user_role
+      WHERE user_id = %s AND role_id = %s
+      LIMIT 1
+    params:
+    - ${managed_user_id}
+    - ${managed_role_id}
+
+role_export_cases:
+- id: ROLE-EXPORT-001
+  smoke: true
+  title: 导出角色列表
+  request:
+    auth: true
+    form:
+      pageNum: 1
+      pageSize: 10
+      roleKey: common
+  expected_file:
+    http_status: 200
+    min_bytes: 100
+    startswith: PK
+- id: ROLE-EXPORT-002
+  title: 未登录导出角色列表
+  request:
+    auth: false
+    form:
+      pageNum: 1
+      pageSize: 10
+  expected:
+    http_status: 200
+    code: 401
+    success: false
+    msg_contains: 未登录
