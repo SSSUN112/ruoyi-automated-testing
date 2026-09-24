@@ -1,3 +1,4 @@
+import os
 import shutil
 import subprocess
 import uuid
@@ -97,6 +98,9 @@ def pytest_runtest_logreport(report):
 
 
 def pytest_sessionfinish(session, exitstatus):
+    # CI由Jenkins发布Allure，避免读取本地旧报告。
+    if os.getenv("CI") == "true":
+        return
     if session.config.option.collectonly:
         return
 

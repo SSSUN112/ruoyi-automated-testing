@@ -1,3 +1,4 @@
+import os
 import re
 from pathlib import Path
 from urllib.error import URLError
@@ -156,12 +157,12 @@ def stop_ui_diagnostics(context: BrowserContext, request) -> None:
 
     try:
         if test_failed:
-            trace_dir = BASE_DIR / "reports" / "ui-traces"
+            trace_dir = Path(os.getenv("CI_REPORT_DIR", str(BASE_DIR / "reports"))) / "ui-traces"
             trace_dir.mkdir(parents=True, exist_ok=True)
             trace_path = trace_dir / f"{safe_artifact_name(request.node.nodeid)}.zip"
             context.tracing.stop(path=str(trace_path))
-            attach_ui_trace(trace_path)
-            attach_browser_events(request)
+            attach_ui_trace(trace_path)          #写入trance
+            attach_browser_events(request)      #写入console /pageserror
         else:
             context.tracing.stop()
     except Error as error:
@@ -178,7 +179,7 @@ def watch_page_events(page: Page, request) -> None:
     request.node._ui_watched_pages = watched_pages
 
     page.on("console",
-            lambda message: watched_pages(
+            lambda message: add_browser_event(
             request,
             f"console.{message.type}: {message.text}",
         ),
@@ -224,7 +225,7 @@ def attach_failure_screenshot(page: Page, request) -> None:
     report = getattr(request.node, "rep_call", None)  # 获取测试结果
     if report and report.failed:  # 如果测试失败
         # 保存截图
-        screenshot_dir = BASE_DIR / "reports" / "ui-screenshots"
+        screenshot_dir = Path(os.getenv("CI_REPORT_DIR", str(BASE_DIR / "reports"))) / "ui-screenshots"
         screenshot_dir.mkdir(parents=True, exist_ok=True)
         screenshot_path = screenshot_dir / f"{safe_artifact_name(request.node.nodeid)}.png"
         try:

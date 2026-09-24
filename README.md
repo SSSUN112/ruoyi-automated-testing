@@ -184,7 +184,7 @@ payload:
 - `TEST_SUITE`：`smoke`、`api`、`ui`、`full`
 - `RUN_PERFORMANCE`：是否执行轻量 JMeter 性能验证
 
-当前流水线要求被测系统提前启动，并在 Jenkins Agent 上通过 `127.0.0.1:12580`、`19099`、`13306` 和 `16379` 访问四项服务。流水线会准备 Python 环境、检查服务端口、执行测试，并归档日志、Allure 结果和性能报告。
+流水线按TEST_SUITE检查实际配置：smoke为API冒烟，api/smoke只检查后端、MySQL、Redis；ui/full另检查前端并安装Chromium。服务需提前启动。JUnit、Allure、日志和UI附件按构建号隔离，具体见[使用说明](ci/jenkins_usage.md)。
 
 详细配置见 [Jenkins 持续集成说明](ci/jenkins_usage.md)。
 
