@@ -25,9 +25,10 @@ pipeline {
     }
 
     environment {
-        PYTHON = '.venv\\Scripts\\python.exe'
-        TEST_ENV = "${params.TEST_ENV}"
-        UI_HEADLESS = 'true'
+    BASE_PYTHON = 'D:\\APP\\python311\\python.exe'
+    PYTHON = '.venv\\Scripts\\python.exe'
+    TEST_ENV = "${params.TEST_ENV}"
+    UI_HEADLESS = 'true'
     }
 
     stages {
@@ -35,7 +36,7 @@ pipeline {
             steps {
                 powershell '''
                     if (-not (Test-Path ".venv\\Scripts\\python.exe")) {
-                        py -3.11 -m venv .venv
+                        & $env:BASE_PYTHON -m venv .venv
                     }
 
                     .venv\\Scripts\\python.exe -m pip install --upgrade pip
